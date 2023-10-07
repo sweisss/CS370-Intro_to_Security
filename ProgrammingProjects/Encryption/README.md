@@ -1,7 +1,7 @@
 To activate venv:
 
 ```
-source venv/Scripts/activate
+source WSLvenv/bin/activate
 ```
 
 To deactivate venv:
