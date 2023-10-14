@@ -66,7 +66,7 @@ plaintext_b = str(plaintext).encode()
 
 hashlist = []
 
-def create_md5_hash(data):
+def md5_hash(data):
     # data = str(data).encode()
     md5 = MD5.new(data=str(data).encode())
     hash_hex = md5.hexdigest()
@@ -74,10 +74,10 @@ def create_md5_hash(data):
     return short_hash_hex
 
 
-def test_md5_collisions(n:int):
+def test_hash_collisions(n:int, hash_method:object) -> int:
     collision_count = 0
     for i in range(n):
-        hash_hex = create_md5_hash(i)
+        hash_hex = hash_method(i)
         if hash_hex in hashlist:
             debug_print(f"Collision detected on hash: {hash_hex}")
             collision_count += 1
@@ -88,7 +88,7 @@ def test_md5_collisions(n:int):
 
 
 def main():
-    md5_collisions = test_md5_collisions(TRIALS)
+    md5_collisions = test_hash_collisions(TRIALS, md5_hash)
     print(f'Total MD5 collisions after {TRIALS} trials: {md5_collisions}')
 
 
