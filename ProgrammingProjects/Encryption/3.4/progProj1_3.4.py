@@ -18,6 +18,7 @@ Cited sources:
 https://canvas.oregonstate.edu/courses/1933665/pages/programming-project-encryption-helper-3-dot-4?wrap=1
 https://pycryptodome.readthedocs.io/en/latest/src/cipher/classic.html#cbc-mode
 https://stackoverflow.com/questions/7585435/best-way-to-convert-string-to-bytes-in-python-3
+https://www.tutorialspoint.com/How-can-I-fill-out-a-Python-string-with-spaces
 """
 import sys
 
@@ -46,7 +47,7 @@ CIPHER_HEX = bytearray.fromhex(CIPHER_STR)
 IV_STR = "0" * 32
 IV_HEX = bytearray.fromhex(IV_STR)
 MAX_KEY_LEN = 15
-DEBUG = True
+DEBUG = False
 
 debug_print = lambda input: print(input) if DEBUG else 0
 
@@ -81,18 +82,42 @@ def main():
     debug_print(f'IV_HEX: {IV_HEX}')
 
     plaintext_b = PLAINTEXT.encode('utf-8')
-    key = pad(first_word_b, AES.block_size)
-    cipher = AES.new(key, AES.MODE_CBC, iv=IV_HEX)
-    ct_bytes = cipher.encrypt(pad(plaintext_b, AES.block_size))
-    ct = b64encode(ct_bytes).decode('utf-8')
 
-    ct_check = "3eCtzTutooJpNSNiqqDO2ZXiIiTMkbLofDVv2E/ZChk="
+    # # key = pad(first_word_b, AES.block_size)
+    # key = first_word_b.ljust(AES.block_size, b' ')
+    # debug_print(f'Padded Key: {key}')
+    # cipher = AES.new(key, AES.MODE_CBC, iv=IV_HEX)
+    # ct_bytes = cipher.encrypt(pad(plaintext_b, AES.block_size))
+    # debug_print(f'ct_bytes: {ct_bytes}')
+    # ct = b64encode(ct_bytes).decode('utf-8')
 
-    print("ciphertext check: ", ct == ct_check)
+    # ct_check = "3eCtzTutooJpNSNiqqDO2ZXiIiTMkbLofDVv2E/ZChk="
 
-    result = json.dumps({'iv':IV_STR, 'ciphertext':ct})
-    print(result)
+    # debug_print(f"ciphertext check: {ct == ct_check}")
 
+    # cipher2 = AES.new(key, AES.MODE_CBC, IV_HEX)
+    # pt = unpad(cipher2.decrypt(ct_bytes), AES.block_size)
+    # debug_print(f'pt: {pt}')
+
+
+    for word in small_words:
+        word_bytes = word.encode('utf-8')
+        key = word_bytes.ljust(AES.block_size, b' ')
+        cipher = AES.new(key, AES.MODE_CBC, IV_HEX)
+        ct_bytes = cipher.encrypt(pad(plaintext_b, AES.block_size))
+        ct = b64encode(ct_bytes).decode('utf-8')
+
+        if ct_bytes == CIPHER_HEX:
+            print('Found a match')
+            print(f'Known Ciphertext: {CIPHER_STR}')
+            print(f'Calculated Ciphertext: {ct}')
+
+            cipher2 = AES.new(key, AES.MODE_CBC, IV_HEX)
+            plaintext2 = unpad(cipher2.decrypt(ct_bytes), AES.block_size)
+            print(f'Known plaintext: {PLAINTEXT}')
+            print(f'Calculated plaintext: {plaintext2.decode()}')
+
+            print(f'Keyword: {word}')
 
 
 if __name__ == "__main__":
