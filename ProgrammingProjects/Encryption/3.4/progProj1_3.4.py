@@ -16,7 +16,9 @@ bits. Your goal is to write a program to find out this key.
 """
 import sys
 
+
 DEBUG = True
+
 
 def main():
     param_count = len(sys.argv)
@@ -27,24 +29,6 @@ def main():
     if param_count >= 2:
         print(f'sys.argv[1]: {sys.argv[1]}') if DEBUG else 0
         print(f'sys.argv[2]: {sys.argv[2]}') if DEBUG else 0
-
-
-    # # if parameterCount == 3 and sys.argv[1] == "-p" and sys.argv[2].isnumber():
-    # if param_count == 3 and sys.argv[1] == "-p" and sys.argv[2].isdigit():    # Changed from line above, 9/28/23, SAW
-    #     key = int(sys.argv[2])
-    #     printKeyMap(key)
-    # elif param_count == 4 and sys.argv[2].isdigit():
-    #     key = int(sys.argv[2])
-    #     if sys.argv[1] == "-e":
-    #         encrypt(key, sys.argv[3])
-    #     elif sys.argv[1] == "-d":
-    #         decrypt(key, sys.argv[3])
-    #     else:
-    #         printCliSyntax()
-    # elif len(sys.argv) == 2 and sys.argv[1] == "-u":
-    #     unitTests()
-    # else:
-    #     printCliSyntax()
 
 
 if __name__ == "__main__":
