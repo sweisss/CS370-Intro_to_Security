@@ -63,7 +63,8 @@ def decode_check(key, ct_bytes):
     print(f'Calculated plaintext: {plaintext2.decode()}')
 
 
-def print_cipher_match(ct):
+def print_cipher_match(ct_bytes):
+    ct = b64encode(ct_bytes).decode('utf-8')
     print('Found a match')
     print(f'Known Ciphertext: {CIPHER_STR}')
     print(f'Calculated Ciphertext: {ct}')
@@ -78,21 +79,19 @@ def build_key(word):
 def main():
     words = load_key_words('./words.txt')
     small_words = filter_words(words, MAX_KEY_LEN)
+    plaintext_b = PLAINTEXT.encode('utf-8')
 
     debug_print(f'AES.block_size: {AES.block_size}')
     debug_print(f'IV_STR: {IV_STR}')
     debug_print(f'IV_HEX: {IV_HEX}')
 
-    plaintext_b = PLAINTEXT.encode('utf-8')
-
     for word in small_words:
         key = build_key(word)
         cipher = create_cipher_obj(key)
         ct_bytes = cipher.encrypt(pad(plaintext_b, AES.block_size))
-        ct = b64encode(ct_bytes).decode('utf-8')
 
         if ct_bytes == CIPHER_HEX:
-            print_cipher_match(ct)
+            print_cipher_match(ct_bytes)
             decode_check(key, ct_bytes)
             print(f'Keyword: {word}')
 
