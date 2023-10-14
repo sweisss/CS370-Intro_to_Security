@@ -74,15 +74,10 @@ def create_md5_hash(data):
     return short_hash_hex
 
 
-
-
 def test_md5_collisions(n:int):
     collision_count = 0
-
     for i in range(n):
         hash_hex = create_md5_hash(i)
-        # print(hash_hex)
-
         if hash_hex in hashlist:
             debug_print(f"Collision detected on hash: {hash_hex}")
             collision_count += 1
@@ -90,6 +85,7 @@ def test_md5_collisions(n:int):
         hashlist.append(hash_hex)
 
     return collision_count
+
 
 def main():
     md5_collisions = test_md5_collisions(TRIALS)
