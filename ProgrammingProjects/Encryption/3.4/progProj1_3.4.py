@@ -52,9 +52,13 @@ def filter_words(words: list, wordlen: int) -> list:
     return small_words
 
 
+def create_cipher_obj(key):
+    return AES.new(key, AES.MODE_CBC, IV_HEX)
+
+
 def decode_check(key, ct_bytes):
-    cipher2 = AES.new(key, AES.MODE_CBC, IV_HEX)
-    plaintext2 = unpad(cipher2.decrypt(ct_bytes), AES.block_size)
+    cipher = create_cipher_obj(key)
+    plaintext2 = unpad(cipher.decrypt(ct_bytes), AES.block_size)
     print(f'Known plaintext: {PLAINTEXT}')
     print(f'Calculated plaintext: {plaintext2.decode()}')
 
@@ -83,7 +87,7 @@ def main():
 
     for word in small_words:
         key = build_key(word)
-        cipher = AES.new(key, AES.MODE_CBC, IV_HEX)
+        cipher = create_cipher_obj(key)
         ct_bytes = cipher.encrypt(pad(plaintext_b, AES.block_size))
         ct = b64encode(ct_bytes).decode('utf-8')
 
