@@ -33,8 +33,7 @@ https://pycryptodome.readthedocs.io/en/latest/src/hash/hash.html#extensible-outp
 https://pycryptodome.readthedocs.io/en/latest/src/hash/md5.html
 https://www.baeldung.com/cs/hash-collision-weak-vs-strong-resistance#:~:text=Weak%20Collision%20Resistance,is%20not%20a%20trivial%20task.
 """
-from Crypto.Hash import SHA256, SHAKE128, MD5, SHA512, SHA3_512
-import random
+from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
 
 N_BITS = 24
 N_BYTES = N_BITS // 8
@@ -43,26 +42,6 @@ DEBUG = False
 
 
 debug_print = lambda input: print(input) if DEBUG else 0
-
-
-# sha = SHA256.new(data=b'First')
-# print(type(sha))
-# print(sha.hexdigest())
-
-# shake = SHAKE128.new(data=b'First')
-# print(type(shake))
-# print(shake.read(N_BYTES).hex())
-
-# md5 = MD5.new()
-# md5.update(b'Hello')
-# print(md5.hexdigest())
-
-
-plaintext = random.randint(0, 100)
-plaintext_b = str(plaintext).encode()
-
-# debug_print(f'plaintext: {plaintext}')
-# debug_print(f'plaintext_b: {plaintext_b}')
 
 
 def create_short_hash(data, hash_method):
