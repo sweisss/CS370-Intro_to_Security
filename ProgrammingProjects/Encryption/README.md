@@ -18,10 +18,10 @@ Python version 3.8.10
 - Ensure that the file *progProj1_3.4.py* is in the same directory as *words.txt*.
 - Activate your venv
 - If [`Crypto.Cipher`](https://pycryptodome.readthedocs.io/en/latest/src/cipher/classic.html#cbc-mode) is not installed, follow the [installation instuctions](https://pycryptodome.readthedocs.io/en/latest/src/installation.html).
-- The known cyphertext and plaintext are hard-coded in the program for this assignment:
+- The known plaintext and ciphertext are hard-coded in the program for this assignment:
     ```
-    CIPHER_STR = "8d20e5056a8d24d0462ce74e4904c1b513e10d1df4a2ef2ad4540fae1ca0aaf9"
     PLAINTEXT = "This is a top secret."
+    CIPHER_STR = "8d20e5056a8d24d0462ce74e4904c1b513e10d1df4a2ef2ad4540fae1ca0aaf9"
     ```
 - To run the program, simply navigate your shell (venv) to the directory containing it and enter:
     ```
