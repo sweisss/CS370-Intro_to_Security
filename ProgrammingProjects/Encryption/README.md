@@ -28,4 +28,14 @@ Python version 3.8.10
     python progProj1_3.4.py
     ```
 
+- The output should look like the following:
+    ```
+    Found a match
+    Known Ciphertext: 8d20e5056a8d24d0462ce74e4904c1b513e10d1df4a2ef2ad4540fae1ca0aaf9
+    Calculated Ciphertext: 8d20e5056a8d24d0462ce74e4904c1b513e10d1df4a2ef2ad4540fae1ca0aaf9
+    Known plaintext: This is a top secret.
+    Calculated plaintext: This is a top secret.
+    Keyword: median
+    ```
+
 ## Section 3.8 Instructions
