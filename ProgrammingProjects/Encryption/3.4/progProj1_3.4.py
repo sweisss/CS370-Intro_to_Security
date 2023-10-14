@@ -65,6 +65,11 @@ def print_cipher_match(ct):
     print(f'Calculated Ciphertext: {ct}')
 
 
+def build_key(word):
+    word_bytes = word.encode('utf-8')
+    key = word_bytes.ljust(AES.block_size, b' ')
+    return key
+
 
 def main():
     words = load_key_words('./words.txt')
@@ -77,8 +82,7 @@ def main():
     plaintext_b = PLAINTEXT.encode('utf-8')
 
     for word in small_words:
-        word_bytes = word.encode('utf-8')
-        key = word_bytes.ljust(AES.block_size, b' ')
+        key = build_key(word)
         cipher = AES.new(key, AES.MODE_CBC, IV_HEX)
         ct_bytes = cipher.encrypt(pad(plaintext_b, AES.block_size))
         ct = b64encode(ct_bytes).decode('utf-8')
