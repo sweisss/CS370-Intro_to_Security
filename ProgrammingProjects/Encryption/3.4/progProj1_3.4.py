@@ -52,15 +52,23 @@ def filter_words(words: list, wordlen: int) -> list:
     return small_words
 
 
+def decode_check(key, ct_bytes):
+    cipher2 = AES.new(key, AES.MODE_CBC, IV_HEX)
+    plaintext2 = unpad(cipher2.decrypt(ct_bytes), AES.block_size)
+    print(f'Known plaintext: {PLAINTEXT}')
+    print(f'Calculated plaintext: {plaintext2.decode()}')
+
+
+def print_cipher_match(ct):
+    print('Found a match')
+    print(f'Known Ciphertext: {CIPHER_STR}')
+    print(f'Calculated Ciphertext: {ct}')
+
+
+
 def main():
     words = load_key_words('./words.txt')
     small_words = filter_words(words, MAX_KEY_LEN)
-
-    first_word = small_words[0]
-    debug_print(f'First word: {first_word}')
-    first_word_b = first_word.encode('utf-8')
-    debug_print(f'First word as bytes: {first_word_b}')    
-
 
     debug_print(f'AES.block_size: {AES.block_size}')
     debug_print(f'IV_STR: {IV_STR}')
@@ -76,15 +84,8 @@ def main():
         ct = b64encode(ct_bytes).decode('utf-8')
 
         if ct_bytes == CIPHER_HEX:
-            print('Found a match')
-            print(f'Known Ciphertext: {CIPHER_STR}')
-            print(f'Calculated Ciphertext: {ct}')
-
-            cipher2 = AES.new(key, AES.MODE_CBC, IV_HEX)
-            plaintext2 = unpad(cipher2.decrypt(ct_bytes), AES.block_size)
-            print(f'Known plaintext: {PLAINTEXT}')
-            print(f'Calculated plaintext: {plaintext2.decode()}')
-
+            print_cipher_match(ct)
+            decode_check(key, ct_bytes)
             print(f'Keyword: {word}')
 
 
