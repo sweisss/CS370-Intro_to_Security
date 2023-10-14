@@ -20,26 +20,10 @@ https://pycryptodome.readthedocs.io/en/latest/src/cipher/classic.html#cbc-mode
 https://stackoverflow.com/questions/7585435/best-way-to-convert-string-to-bytes-in-python-3
 https://www.tutorialspoint.com/How-can-I-fill-out-a-Python-string-with-spaces
 """
-import sys
-
-# from Crypto.Cipher import AES
-# from Crypto.Random import get_random_bytes
-
-import json
-from base64 import b64encode, b64decode
+from base64 import b64encode
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
-from Crypto.Random import get_random_bytes
 
-# try:
-#     b64 = json.loads(result)
-#     iv = b64decode(b64['iv'])
-#     ct = b64decode(b64['ciphertext'])
-#     cipher = AES.new(key, AES.MODE_CBC, iv)
-#     pt = unpad(cipher.decrypt(ct), AES.block_size)
-#     print("The message was: ", pt)
-# except (ValueError, KeyError):
-#     print("Incorrect decryption")
 
 PLAINTEXT = "This is a top secret."
 CIPHER_STR = "8d20e5056a8d24d0462ce74e4904c1b513e10d1df4a2ef2ad4540fae1ca0aaf9"
@@ -48,6 +32,7 @@ IV_STR = "0" * 32
 IV_HEX = bytearray.fromhex(IV_STR)
 MAX_KEY_LEN = 15
 DEBUG = False
+
 
 debug_print = lambda input: print(input) if DEBUG else 0
 
@@ -82,23 +67,6 @@ def main():
     debug_print(f'IV_HEX: {IV_HEX}')
 
     plaintext_b = PLAINTEXT.encode('utf-8')
-
-    # # key = pad(first_word_b, AES.block_size)
-    # key = first_word_b.ljust(AES.block_size, b' ')
-    # debug_print(f'Padded Key: {key}')
-    # cipher = AES.new(key, AES.MODE_CBC, iv=IV_HEX)
-    # ct_bytes = cipher.encrypt(pad(plaintext_b, AES.block_size))
-    # debug_print(f'ct_bytes: {ct_bytes}')
-    # ct = b64encode(ct_bytes).decode('utf-8')
-
-    # ct_check = "3eCtzTutooJpNSNiqqDO2ZXiIiTMkbLofDVv2E/ZChk="
-
-    # debug_print(f"ciphertext check: {ct == ct_check}")
-
-    # cipher2 = AES.new(key, AES.MODE_CBC, IV_HEX)
-    # pt = unpad(cipher2.decrypt(ct_bytes), AES.block_size)
-    # debug_print(f'pt: {pt}')
-
 
     for word in small_words:
         word_bytes = word.encode('utf-8')
