@@ -66,16 +66,9 @@ plaintext_b = str(plaintext).encode()
 
 hashlist = []
 
-def md5_hash(data):
-    md5 = MD5.new(data=str(data).encode())
-    hash_hex = md5.hexdigest()
-    short_hash_hex = hash_hex[0:N_BYTES]
-    return short_hash_hex
-
-
-def sha256_hash(data):
-    sha = SHA256.new(data=str(data).encode())
-    hash_hex = sha.hexdigest()
+def create_short_hash(data, hash_method):
+    hasher = hash_method.new(data=str(data).encode())
+    hash_hex = hasher.hexdigest()
     short_hash_hex = hash_hex[0:N_BYTES]
     return short_hash_hex
 
@@ -83,7 +76,7 @@ def sha256_hash(data):
 def test_hash_collisions(n:int, hash_method:object) -> int:
     collision_count = 0
     for i in range(n):
-        hash_hex = hash_method(i)
+        hash_hex = create_short_hash(i, hash_method)
         if hash_hex in hashlist:
             debug_print(f"Collision detected on hash: {hash_hex}")
             collision_count += 1
@@ -94,10 +87,10 @@ def test_hash_collisions(n:int, hash_method:object) -> int:
 
 
 def main():
-    md5_collisions = test_hash_collisions(TRIALS, md5_hash)
+    md5_collisions = test_hash_collisions(TRIALS, MD5)
     print(f'Total MD5 collisions after {TRIALS} trials: {md5_collisions}')
 
-    sha256_collisions = test_hash_collisions(TRIALS, sha256_hash)
+    sha256_collisions = test_hash_collisions(TRIALS, SHA256)
     print(f'Total SHA256 collisions after {TRIALS} trials: {sha256_collisions}')
 
 
