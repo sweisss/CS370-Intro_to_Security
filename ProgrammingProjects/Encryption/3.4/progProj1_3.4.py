@@ -20,7 +20,6 @@ https://pycryptodome.readthedocs.io/en/latest/src/cipher/classic.html#cbc-mode
 https://stackoverflow.com/questions/7585435/best-way-to-convert-string-to-bytes-in-python-3
 https://www.tutorialspoint.com/How-can-I-fill-out-a-Python-string-with-spaces
 """
-from base64 import b64encode
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 
@@ -64,7 +63,7 @@ def decode_check(key, ct_bytes):
 
 
 def print_cipher_match(ct_bytes):
-    ct = b64encode(ct_bytes).decode('utf-8')
+    ct = ct_bytes.hex()
     print('Found a match')
     print(f'Known Ciphertext: {CIPHER_STR}')
     print(f'Calculated Ciphertext: {ct}')
