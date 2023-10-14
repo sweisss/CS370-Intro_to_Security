@@ -33,12 +33,12 @@ https://pycryptodome.readthedocs.io/en/latest/src/hash/hash.html#extensible-outp
 https://pycryptodome.readthedocs.io/en/latest/src/hash/md5.html
 https://www.baeldung.com/cs/hash-collision-weak-vs-strong-resistance#:~:text=Weak%20Collision%20Resistance,is%20not%20a%20trivial%20task.
 """
-from Crypto.Hash import SHA256, SHAKE128, MD5
+from Crypto.Hash import SHA256, SHAKE128, MD5, SHA512, SHA3_512
 import random
 
 N_BITS = 24
 N_BYTES = N_BITS // 8
-TRIALS = 500
+TRIALS = 1000
 DEBUG = False
 
 
@@ -93,6 +93,11 @@ def main():
     sha256_collisions = test_hash_collisions(TRIALS, SHA256)
     print(f'Total SHA256 collisions after {TRIALS} trials: {sha256_collisions}')
 
+    sha512_collisions = test_hash_collisions(TRIALS, SHA512)
+    print(f'Total SHA512 collisions after {TRIALS} trials: {sha512_collisions}')
+
+    sha3_512_collisions = test_hash_collisions(TRIALS, SHA3_512)
+    print(f'Total SHA3_512 collisions after {TRIALS} trials: {sha3_512_collisions}')
 
 if __name__ == "__main__":
     main()
