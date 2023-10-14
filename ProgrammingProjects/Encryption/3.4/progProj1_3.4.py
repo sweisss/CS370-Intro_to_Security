@@ -47,7 +47,6 @@ def filter_words(words: list, wordlen: int) -> list:
     small_words = [word.strip() for word in words if len(word) <= wordlen]
     debug_print(f'Words in words.txt: {len(words)}')
     debug_print(f'Words less than 16 chars in words.txt: {len(small_words)}')
-
     return small_words
 
 
