@@ -64,7 +64,6 @@ plaintext_b = str(plaintext).encode()
 # debug_print(f'plaintext: {plaintext}')
 # debug_print(f'plaintext_b: {plaintext_b}')
 
-hashlist = []
 
 def create_short_hash(data, hash_method):
     hasher = hash_method.new(data=str(data).encode())
@@ -74,6 +73,7 @@ def create_short_hash(data, hash_method):
 
 
 def test_hash_collisions(n:int, hash_method:object) -> int:
+    hashlist = []
     collision_count = 0
     for i in range(n):
         hash_hex = create_short_hash(i, hash_method)
