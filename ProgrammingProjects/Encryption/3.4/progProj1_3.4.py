@@ -55,6 +55,9 @@ from Crypto.Random import get_random_bytes
 PLAINTEXT = "This is a top secret."
 CIPHER_STR = "8d20e5056a8d24d0462ce74e4904c1b513e10d1df4a2ef2ad4540fae1ca0aaf9"
 CIPHER_HEX = bytearray.fromhex(CIPHER_STR)
+# IV = 0x00000000000000000000000000000000
+IV_STR = "0" * 32
+IV_HEX = bytearray.fromhex(IV_STR)
 MAX_KEY_LEN = 15
 DEBUG = True
 
@@ -100,13 +103,22 @@ def main():
     debug_print(f'First word as bytes: {first_word_b}')    
 
 
+    debug_print(f'AES.block_size: {AES.block_size}')
+    debug_print(f'IV_STR: {IV_STR}')
+    debug_print(f'IV_HEX: {IV_HEX}')
+
     plaintext_b = PLAINTEXT.encode('utf-8')
     key = pad(first_word_b, AES.block_size)
-    cipher = AES.new(key, AES.MODE_CBC)
+    cipher = AES.new(key, AES.MODE_CBC, iv=IV_HEX)
     ct_bytes = cipher.encrypt(pad(plaintext_b, AES.block_size))
-    iv = b64encode(cipher.iv).decode('utf-8')
+    # iv = b64encode(cipher.iv).decode('utf-8')
     ct = b64encode(ct_bytes).decode('utf-8')
-    result = json.dumps({'iv':iv, 'ciphertext':ct})
+
+    ct_check = "3eCtzTutooJpNSNiqqDO2ZXiIiTMkbLofDVv2E/ZChk="
+
+    print("ciphertext check: ", ct == ct_check)
+
+    result = json.dumps({'iv':IV_STR, 'ciphertext':ct})
     print(result)
 
 
