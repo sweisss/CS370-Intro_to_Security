@@ -28,10 +28,20 @@ method?
 - Can you explain the difference in your observations?
 
 Resources:
-https://pycryptodome.readthedocs.io/en/latest/src/hash/hash.html#
+https://pycryptodome.readthedocs.io/en/latest/src/hash/hash.html#extensible-output-functions-xof
 """
-from Crypto.Hash import SHA256
+from Crypto.Hash import SHA256, SHAKE128, MD5
 
 
-hash_object = SHA256.new(data=b'First')
-print(type(hash_object))
+sha = SHA256.new(data=b'First')
+print(type(sha))
+print(sha.hexdigest())
+
+shake = SHAKE128.new(data=b'First')
+print(type(shake))
+print(shake.read(16).hex())
+
+md5 = MD5.new()
+md5.update(b'Hello')
+print(md5.hexdigest())
+
