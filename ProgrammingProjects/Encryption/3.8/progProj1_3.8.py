@@ -28,20 +28,74 @@ method?
 - Can you explain the difference in your observations?
 
 Resources:
+https://pycryptodome.readthedocs.io/en/latest/src/hash/hash.html
 https://pycryptodome.readthedocs.io/en/latest/src/hash/hash.html#extensible-output-functions-xof
+https://pycryptodome.readthedocs.io/en/latest/src/hash/md5.html
+https://www.baeldung.com/cs/hash-collision-weak-vs-strong-resistance#:~:text=Weak%20Collision%20Resistance,is%20not%20a%20trivial%20task.
 """
 from Crypto.Hash import SHA256, SHAKE128, MD5
+import random
+
+N_BITS = 24
+N_BYTES = N_BITS // 8
+TRIALS = 500
+DEBUG = False
 
 
-sha = SHA256.new(data=b'First')
-print(type(sha))
-print(sha.hexdigest())
+debug_print = lambda input: print(input) if DEBUG else 0
 
-shake = SHAKE128.new(data=b'First')
-print(type(shake))
-print(shake.read(16).hex())
 
-md5 = MD5.new()
-md5.update(b'Hello')
-print(md5.hexdigest())
+# sha = SHA256.new(data=b'First')
+# print(type(sha))
+# print(sha.hexdigest())
+
+# shake = SHAKE128.new(data=b'First')
+# print(type(shake))
+# print(shake.read(N_BYTES).hex())
+
+# md5 = MD5.new()
+# md5.update(b'Hello')
+# print(md5.hexdigest())
+
+
+plaintext = random.randint(0, 100)
+plaintext_b = str(plaintext).encode()
+
+# debug_print(f'plaintext: {plaintext}')
+# debug_print(f'plaintext_b: {plaintext_b}')
+
+hashlist = []
+
+def create_md5_hash(data):
+    # data = str(data).encode()
+    md5 = MD5.new(data=str(data).encode())
+    hash_hex = md5.hexdigest()
+    short_hash_hex = hash_hex[0:N_BYTES]
+    return short_hash_hex
+
+
+
+
+def test_md5_collisions(n:int):
+    collision_count = 0
+
+    for i in range(n):
+        hash_hex = create_md5_hash(i)
+        # print(hash_hex)
+
+        if hash_hex in hashlist:
+            debug_print(f"Collision detected on hash: {hash_hex}")
+            collision_count += 1
+
+        hashlist.append(hash_hex)
+
+    return collision_count
+
+def main():
+    md5_collisions = test_md5_collisions(TRIALS)
+    print(f'Total MD5 collisions after {TRIALS} trials: {md5_collisions}')
+
+
+if __name__ == "__main__":
+    main()
 
