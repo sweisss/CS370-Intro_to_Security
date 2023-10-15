@@ -42,7 +42,7 @@ N_BITS = 24
 N_BYTES = N_BITS // 8
 TRIALS = 1000
 EXPERIMENTS = 100
-DEBUG = True
+DEBUG = False
 DEBUG_2 = False
 
 
@@ -119,29 +119,55 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object, **kwargs)
 
     Return: number of trials it takes to find a collision
     """
-    hashlist =[]
+    # Create lists to store messages and hashes
+    message_list = []
+    hash_list = []
+
+    # Loop through the trials
     for i in range(1, n_trials + 1):
         # Generate two random messages for each trial
         msg_1 = os.urandom(N_BITS)
         msg_2 = os.urandom(N_BITS)
 
+        # Check the messages haven't already been saved in the message list
+        while msg_1 in message_list:
+            msg_1 = os.urandom(N_BITS)
+
+        while msg_2 in message_list:
+            msg_2 = os.urandom(N_BITS)
+
         # Ensure the messages are distinct
         while msg_1 == msg_2:
-            msg_2 = os.urandom(N_BITS)
-        
+            # Check the msg_2 has't already been saved in the message list
+            while msg_2 in message_list:
+                msg_2 = os.urandom(N_BITS)
+
+        # Save the messages in the message list
+        debug_print_2(f'messages are unique: {msg_1 != msg_2}')
+        debug_print_2(f'messages are not in list: {(msg_1 not in message_list) and (msg_2 not in message_list)}')
+        debug_print_2(f'msg_1: {msg_1.hex()}, msg_2: {msg_2.hex()}')
+        message_list.extend([msg_1, msg_2])
+
+        # Hash the messages
         hash_1 = create_short_hash(msg_1, hash_method)
         hash_2 = create_short_hash(msg_2, hash_method)
 
-        if hashlist_contains_hash(hashlist, hash_1, hash_2):
+        # Check the hashes haven't already been created
+        # Return as a collision if they have
+        if hashlist_contains_hash(hash_list, hash_1, hash_2):
             return i
 
+        # Check the hashes are not equal
+        # Return as a collision if they are
         if hash_1 == hash_2:
             debug_print(f'Collision detected on trial {i} with hash: {hash_1} == {hash_2}')
             debug_print_2(f'msg_1: {msg_1.hex()}, msg_2: {msg_2.hex()}')
             return i
         
-        hashlist.extend([hash_1, hash_2])
+        # Add the hashes to the hash list
+        hash_list.extend([hash_1, hash_2])
 
+    # Return 0 implying no collisions
     return 0
 
 
@@ -172,7 +198,7 @@ def run_experiment(collision_property:str, hash_method, control_msg=''):
             
     avg_trials_needed = sum(trials_counts.values()) / len(trials_counts.values())
 
-    print('---------------------------------------')
+    debug_print('---------------------------------------')
     print(f'{mod_name} {collision_property} collision resistance test results:')
     print(f'Total rounds: {EXPERIMENTS}')
     print(f'Trials per round: {TRIALS}')
