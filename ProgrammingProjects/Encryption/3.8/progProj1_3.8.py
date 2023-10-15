@@ -42,10 +42,15 @@ N_BITS = 24
 N_BYTES = N_BITS // 8
 TRIALS = 1000
 EXPERIMENTS = 100
-DEBUG = True
+DEBUG = False
 
 
 debug_print = lambda input: print(input) if DEBUG else 0
+
+
+def get_module_name(module):
+    name = module.__name__.split(".")[2]
+    return name
 
 
 def create_short_hash(data, hash_method):
@@ -55,7 +60,7 @@ def create_short_hash(data, hash_method):
     return short_hash_hex
 
 
-def test_weak_collision_resistance(message, n_trials:int, hash_method:object) -> int:
+def test_weak_collision_resistance(n_trials:int, hash_method:object, message='') -> int:
     """
     The definition of weak collision resistance is: 
         given an input X and a hashing function H(), it is very difficult to find
@@ -65,25 +70,25 @@ def test_weak_collision_resistance(message, n_trials:int, hash_method:object) ->
         with another input X` is not a trivial task.
 
     Definition from baeldung.com link above.
-    """
-    collision_count = 0
 
+    Return: number of trials it takes to find a collision
+    """
     control_hash = create_short_hash(message, hash_method)
     debug_print(f'control_hash: {control_hash}')
 
-    for i in range(n_trials):
+    for i in range(1, n_trials + 1):
         # Generate a random message to compare with the control message
         rand_msg = os.urandom(N_BITS)
         hash_hex = create_short_hash(rand_msg, hash_method)
 
         if control_hash == hash_hex:
             debug_print(f"Collision detected on trial {i} with hash: {control_hash} == {hash_hex}")
-            collision_count += 1
+            return i
         
-    return collision_count
+    return 0
 
 
-def test_strong_collision_resistance(n_trials:int, hash_method:object) -> int:
+def test_strong_collision_resistance(n_trials:int, hash_method:object, message='') -> int:
     """
     The main idea behind strong collision resistance is: 
         given a hashing function H() and two arbitrary inputs X and Y, there exists
@@ -93,10 +98,10 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object) -> int:
     search for a collision as in the weak collision resistance.
 
     Definition from baeldung.com link above.
-    """
-    collision_count = 0
 
-    for i in range(n_trials):
+    Return: number of trials it takes to find a collision
+    """
+    for i in range(1, n_trials + 1):
         # Generate two random messages for each trial
         msg_1 = os.urandom(N_BITS)
         msg_2 = os.urandom(N_BITS)
@@ -110,40 +115,58 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object) -> int:
 
         if hash_1 == hash_2:
             debug_print(f"Collision detected on trial {i} with hash: {hash_1} == {hash_2}")
-            collision_count += 1
+            return i
 
-    return collision_count
+    return 0
+
+
+test_options = {'weak': test_weak_collision_resistance, 'strong': test_strong_collision_resistance}
+
+
+def run_experiment(collision_property:str, hash_method, control_msg=''):
+    """
+    Runs an experiment N times for M trials and prints the results.
+
+    param collision_property: 'weak' or 'strong'. Used to termine which test to run.
+    param hash_method: python package such as MD5 or SHA256
+    param control_msg: optional control message to be hashed in the weak collision test.
+
+    return: average number of trials needed to find a collision throughout the experiment.
+    """
+    mod_name = get_module_name(hash_method)
+    print()
+    print(f'Testing {mod_name} {collision_property} collision resistance.')
+    print("---------------------------------------")
+
+    trials_counts = {}
+    for i in range(EXPERIMENTS):
+        trials_needed = test_options[collision_property](TRIALS, hash_method, message=control_msg)
+        if trials_needed > 0:
+            trials_counts[f'Round {i}'] = trials_needed
+            debug_print(f'Collision found in round {i} after {trials_needed} trials.')
+            
+    avg_trials_needed = sum(trials_counts.values()) / len(trials_counts.values())
+
+    print(f'{mod_name} {collision_property} collision resistance test results:')
+    print(f'Total rounds: {EXPERIMENTS}')
+    print(f'Trials per round: {TRIALS}')
+    print(f"Average number of trials needed for collision: {avg_trials_needed:.4f}")
+
+    return avg_trials_needed
 
 
 def main():
-    print()
-    print("Testing MD5 weak collision resistance.")
-    print("---------------------------------------")
-    weak_collisions = {}
-    for i in range(EXPERIMENTS):
-        weak_message = b'Testing weak collision resistance.'
-        md5_collisions_1 = test_weak_collision_resistance(weak_message, TRIALS, MD5)
-        if md5_collisions_1 > 0:
-            weak_collisions[i] = md5_collisions_1
-            debug_print(f'Total weak MD5 collisions after {i} rounds: {md5_collisions_1}')
-            
-    total_weak_collisions = sum(weak_collisions.values())
-    avg_weak_collisions = total_weak_collisions / len(weak_collisions.values())
-
-    print('MD5 weak collision cesistance Test results:')
-    print(f'Total rounds: {EXPERIMENTS}')
-    print(f'Trials per round: {TRIALS}')
-    print(f"Total collisions: {total_weak_collisions}")
-    print(f"Averge collisions per round: {avg_weak_collisions}")
-
-    # print(f"MD5 Weak Collision Resistance Test resulted in {total_weak_collisions} "
-    #       f"total collisions after 100 rounds of {TRIALS} trials each.")
+    weak_message = b'Testing weak collision resistance.'
+    weak_trials = run_experiment('weak', MD5, control_msg=weak_message)
+    strong_trials = run_experiment('strong', MD5)
 
     print()
-    print("Testing MD5 strong collision resistance.")
-    print("----------------------------------------")
-    md5_collisions_2 = test_strong_collision_resistance(TRIALS, MD5)
-    print(f'Total strong MD5 collisions after {TRIALS} trials: {md5_collisions_2}')
+    if weak_trials > strong_trials:
+        print('Weak collision property is easier to break using the brute force method.')
+    elif weak_trials < strong_trials:
+        print('Strong collision propety is easier to break using the brute force method.')
+    else:
+        print('Weak and strong collisoin properties are equally easy to break using brute force method.')
 
 
 if __name__ == "__main__":
