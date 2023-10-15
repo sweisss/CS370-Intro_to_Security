@@ -43,7 +43,7 @@ N_BYTES = N_BITS // 8
 TRIALS = 1000
 EXPERIMENTS = 100
 DEBUG = True
-DEBUG_2 = True
+DEBUG_2 = False
 
 
 debug_print = lambda input: print(input) if DEBUG else 0
@@ -62,7 +62,7 @@ def create_short_hash(data, hash_method):
     return short_hash_hex
 
 
-def test_weak_collision_resistance(n_trials:int, hash_method:object, message='') -> int:
+def test_weak_collision_resistance(n_trials:int, hash_method:object, **kwargs) -> int:
     """
     The definition of weak collision resistance is: 
         given an input X and a hashing function H(), it is very difficult to find
@@ -75,8 +75,9 @@ def test_weak_collision_resistance(n_trials:int, hash_method:object, message='')
 
     Return: number of trials it takes to find a collision
     """
+    message = kwargs['message']
     control_hash = create_short_hash(message, hash_method)
-    debug_print(f'control_hash: {control_hash}')
+    debug_print_2(f'control_hash: {control_hash}')
 
     for i in range(1, n_trials + 1):
         # Generate a random message to compare with the control message
@@ -91,7 +92,7 @@ def test_weak_collision_resistance(n_trials:int, hash_method:object, message='')
     return 0
 
 
-def test_strong_collision_resistance(n_trials:int, hash_method:object, message='') -> int:
+def test_strong_collision_resistance(n_trials:int, hash_method:object, **kwargs) -> int:
     """
     The main idea behind strong collision resistance is: 
         given a hashing function H() and two arbitrary inputs X and Y, there exists
@@ -104,6 +105,7 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object, message='
 
     Return: number of trials it takes to find a collision
     """
+    hashlist =[]
     for i in range(1, n_trials + 1):
         # Generate two random messages for each trial
         msg_1 = os.urandom(N_BITS)
@@ -116,10 +118,22 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object, message='
         hash_1 = create_short_hash(msg_1, hash_method)
         hash_2 = create_short_hash(msg_2, hash_method)
 
+        if hash_1 in hashlist:
+            debug_print(f'hash_1 is already in hashlist: {hash_1}')
+            debug_print_2(f'hashlist: {hashlist}')
+            return i
+        
+        if hash_2 in hashlist:
+            debug_print(f'hash_2 is already in hashlist: {hash_2}')
+            debug_print_2(f'hashlist: {hashlist}')
+            return i
+
         if hash_1 == hash_2:
             debug_print(f'Collision detected on trial {i} with hash: {hash_1} == {hash_2}')
             debug_print_2(f'msg_1: {msg_1.hex()}, msg_2: {msg_2.hex()}')
             return i
+        
+        hashlist.extend([hash_1, hash_2])
 
     return 0
 
@@ -140,7 +154,7 @@ def run_experiment(collision_property:str, hash_method, control_msg=''):
     mod_name = get_module_name(hash_method)
     print()
     print(f'Testing {mod_name} {collision_property} collision resistance.')
-    print("---------------------------------------")
+    print('---------------------------------------')
 
     trials_counts = {}
     for i in range(EXPERIMENTS):
@@ -151,10 +165,11 @@ def run_experiment(collision_property:str, hash_method, control_msg=''):
             
     avg_trials_needed = sum(trials_counts.values()) / len(trials_counts.values())
 
+    print('---------------------------------------')
     print(f'{mod_name} {collision_property} collision resistance test results:')
     print(f'Total rounds: {EXPERIMENTS}')
     print(f'Trials per round: {TRIALS}')
-    print(f"Average number of trials needed for collision: {avg_trials_needed:.4f}")
+    print(f'Average number of trials needed for collision: {avg_trials_needed:.4f}')
 
     return avg_trials_needed
 
