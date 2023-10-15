@@ -43,9 +43,11 @@ N_BYTES = N_BITS // 8
 TRIALS = 1000
 EXPERIMENTS = 100
 DEBUG = True
+DEBUG_2 = True
 
 
 debug_print = lambda input: print(input) if DEBUG else 0
+debug_print_2 = lambda input: print(input) if DEBUG_2 else 0
 
 
 def get_module_name(module):
@@ -82,7 +84,8 @@ def test_weak_collision_resistance(n_trials:int, hash_method:object, message='')
         hash_hex = create_short_hash(rand_msg, hash_method)
 
         if control_hash == hash_hex:
-            debug_print(f"Collision detected on trial {i} with hash: {control_hash} == {hash_hex}")
+            debug_print(f'Collision detected on trial {i} with hash: {control_hash} == {hash_hex}')
+            debug_print_2(f'Controll message: {message.hex()}; Compare message: {rand_msg.hex()}')
             return i
         
     return 0
@@ -114,7 +117,8 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object, message='
         hash_2 = create_short_hash(msg_2, hash_method)
 
         if hash_1 == hash_2:
-            debug_print(f"Collision detected on trial {i} with hash: {hash_1} == {hash_2}")
+            debug_print(f'Collision detected on trial {i} with hash: {hash_1} == {hash_2}')
+            debug_print_2(f'msg_1: {msg_1.hex()}, msg_2: {msg_2.hex()}')
             return i
 
     return 0
