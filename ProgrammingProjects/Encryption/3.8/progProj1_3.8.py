@@ -161,9 +161,9 @@ def main():
     strong_trials = run_experiment('strong', MD5)
 
     print()
-    if weak_trials > strong_trials:
+    if weak_trials < strong_trials:
         print('Weak collision property is easier to break using the brute force method.')
-    elif weak_trials < strong_trials:
+    elif strong_trials < weak_trials:
         print('Strong collision propety is easier to break using the brute force method.')
     else:
         print('Weak and strong collisoin properties are equally easy to break using brute force method.')
