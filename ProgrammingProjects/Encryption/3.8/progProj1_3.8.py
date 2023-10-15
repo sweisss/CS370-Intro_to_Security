@@ -42,7 +42,7 @@ N_BITS = 24
 N_BYTES = N_BITS // 8
 TRIALS = 1000
 EXPERIMENTS = 100
-DEBUG = False
+DEBUG = True
 DEBUG_2 = False
 
 
@@ -106,6 +106,27 @@ def hashlist_contains_hash(hashlist, hash_1, hash_2):
     return False
 
 
+def generate_two_unique_messages(message_list):
+    # Generate two random messages for each trial
+    msg_1 = os.urandom(N_BITS)
+    msg_2 = os.urandom(N_BITS)
+
+    # Check the messages haven't already been saved in the message list
+    while msg_1 in message_list:
+        msg_1 = os.urandom(N_BITS)
+
+    while msg_2 in message_list:
+        msg_2 = os.urandom(N_BITS)
+
+    # Ensure the messages are distinct
+    while msg_1 == msg_2:
+        # Check the msg_2 has't already been saved in the message list
+        while msg_2 in message_list:
+            msg_2 = os.urandom(N_BITS)
+
+    return msg_1, msg_2
+
+
 def test_strong_collision_resistance(n_trials:int, hash_method:object, **kwargs) -> int:
     """
     The main idea behind strong collision resistance is: 
@@ -126,21 +147,7 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object, **kwargs)
     # Loop through the trials
     for i in range(1, n_trials + 1):
         # Generate two random messages for each trial
-        msg_1 = os.urandom(N_BITS)
-        msg_2 = os.urandom(N_BITS)
-
-        # Check the messages haven't already been saved in the message list
-        while msg_1 in message_list:
-            msg_1 = os.urandom(N_BITS)
-
-        while msg_2 in message_list:
-            msg_2 = os.urandom(N_BITS)
-
-        # Ensure the messages are distinct
-        while msg_1 == msg_2:
-            # Check the msg_2 has't already been saved in the message list
-            while msg_2 in message_list:
-                msg_2 = os.urandom(N_BITS)
+        msg_1, msg_2 = generate_two_unique_messages(message_list)
 
         # Save the messages in the message list
         debug_print_2(f'messages are unique: {msg_1 != msg_2}')
