@@ -92,6 +92,20 @@ def test_weak_collision_resistance(n_trials:int, hash_method:object, **kwargs) -
     return 0
 
 
+def hashlist_contains_hash(hashlist, hash_1, hash_2):
+    if hash_1 in hashlist:
+        debug_print(f'hash_1 is already in hashlist: {hash_1}')
+        debug_print_2(f'hashlist: {hashlist}')
+        return True
+    
+    if hash_2 in hashlist:
+        debug_print(f'hash_2 is already in hashlist: {hash_2}')
+        debug_print_2(f'hashlist: {hashlist}')
+        return True
+    
+    return False
+
+
 def test_strong_collision_resistance(n_trials:int, hash_method:object, **kwargs) -> int:
     """
     The main idea behind strong collision resistance is: 
@@ -118,14 +132,7 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object, **kwargs)
         hash_1 = create_short_hash(msg_1, hash_method)
         hash_2 = create_short_hash(msg_2, hash_method)
 
-        if hash_1 in hashlist:
-            debug_print(f'hash_1 is already in hashlist: {hash_1}')
-            debug_print_2(f'hashlist: {hashlist}')
-            return i
-        
-        if hash_2 in hashlist:
-            debug_print(f'hash_2 is already in hashlist: {hash_2}')
-            debug_print_2(f'hashlist: {hashlist}')
+        if hashlist_contains_hash(hashlist, hash_1, hash_2):
             return i
 
         if hash_1 == hash_2:
