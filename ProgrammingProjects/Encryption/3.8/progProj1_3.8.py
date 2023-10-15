@@ -42,7 +42,7 @@ N_BITS = 24
 N_BYTES = N_BITS // 8
 TRIALS = 1000
 EXPERIMENTS = 100
-DEBUG = False
+DEBUG = True
 
 
 debug_print = lambda input: print(input) if DEBUG else 0
@@ -168,6 +168,16 @@ def main():
     else:
         print('Weak and strong collisoin properties are equally easy to break using brute force method.')
 
+    weak_trials = run_experiment('weak', SHA256, control_msg=weak_message)
+    strong_trials = run_experiment('strong', SHA256)
+
+    print()
+    if weak_trials < strong_trials:
+        print('Weak collision property is easier to break using the brute force method.')
+    elif strong_trials < weak_trials:
+        print('Strong collision propety is easier to break using the brute force method.')
+    else:
+        print('Weak and strong collisoin properties are equally easy to break using brute force method.')
 
 if __name__ == "__main__":
     main()
