@@ -33,6 +33,7 @@ https://pycryptodome.readthedocs.io/en/latest/src/hash/hash.html#extensible-outp
 https://pycryptodome.readthedocs.io/en/latest/src/hash/md5.html
 https://www.baeldung.com/cs/hash-collision-weak-vs-strong-resistance#:~:text=Weak%20Collision%20Resistance,is%20not%20a%20trivial%20task.
 https://www.geeksforgeeks.org/python-os-urandom-method/
+https://crypto.stackexchange.com/questions/40946/breaking-effort-on-both-weak-and-strong-collision-resistance-hash-values#:~:text=To%20break%20strong%20collision%20resistance,x%E2%80%B2%20which%20is%20a%20collision.
 """
 from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
 import os
@@ -76,8 +77,10 @@ def test_weak_collision_resistance(n_trials:int, hash_method:object, **kwargs) -
     Return: number of trials it takes to find a collision
     """
     message = kwargs['message']
+    debug_print(f'Control message: {message.hex()}')
     control_hash = create_short_hash(message, hash_method)
-    debug_print_2(f'control_hash: {control_hash}')
+    debug_print(f'control_hash: {control_hash}')
+
 
     for i in range(1, n_trials + 1):
         # Generate a random message to compare with the control message
@@ -180,6 +183,7 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object, **kwargs)
 
 test_options = {'weak': test_weak_collision_resistance, 'strong': test_strong_collision_resistance}
 
+find_smaller = lambda x, y: x if x < y else y
 
 def run_experiment(collision_property:str, hash_method, control_msg=''):
     """
@@ -215,28 +219,23 @@ def run_experiment(collision_property:str, hash_method, control_msg=''):
 
 
 def main():
-    weak_message = b'Testing weak collision resistance.'
+    # weak_message = b'Testing weak collision resistance.'
+    weak_message = os.urandom(N_BITS)
     weak_trials = run_experiment('weak', MD5, control_msg=weak_message)
     strong_trials = run_experiment('strong', MD5)
 
-    print()
-    if weak_trials < strong_trials:
-        print('Weak collision property is easier to break using the brute force method.')
-    elif strong_trials < weak_trials:
-        print('Strong collision propety is easier to break using the brute force method.')
-    else:
-        print('Weak and strong collisoin properties are equally easy to break using brute force method.')
-
-    weak_trials = run_experiment('weak', SHA256, control_msg=weak_message)
-    strong_trials = run_experiment('strong', SHA256)
+    results = {weak_trials: 'Weak', strong_trials: 'Strong'}
 
     print()
-    if weak_trials < strong_trials:
-        print('Weak collision property is easier to break using the brute force method.')
-    elif strong_trials < weak_trials:
-        print('Strong collision propety is easier to break using the brute force method.')
-    else:
-        print('Weak and strong collisoin properties are equally easy to break using brute force method.')
+    print('Overall results')
+    print('---------------------------------------')
+    print(f'Average number of trials needed to break weak collision resistance: {weak_trials:.4f}')
+    print(f'Average number of trials needed to break strong collision resistance: {strong_trials:.4f}')
+
+    smaller = find_smaller(weak_trials, strong_trials)
+
+    print(f'{results.get(smaller)} collision property is easier to break using the brute force method.')
+
 
 if __name__ == "__main__":
     main()
