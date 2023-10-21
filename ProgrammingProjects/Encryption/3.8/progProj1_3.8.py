@@ -43,7 +43,7 @@ N_BITS = 24
 N_BYTES = N_BITS // 8
 TRIALS = 1000
 EXPERIMENTS = 100
-DEBUG = True
+DEBUG = False
 DEBUG_2 = False
 
 
@@ -236,7 +236,7 @@ def main():
 
     smaller = find_smaller(weak_trials, strong_trials)
 
-    print(f'{results.get(smaller)} collision property is easier to break using the brute force method.')
+    print(f'{results.get(smaller)} collision property is easier to break using the brute force method.\n')
 
 
 if __name__ == "__main__":
