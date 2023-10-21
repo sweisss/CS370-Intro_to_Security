@@ -183,7 +183,9 @@ def test_strong_collision_resistance(n_trials:int, hash_method:object, **kwargs)
 
 test_options = {'weak': test_weak_collision_resistance, 'strong': test_strong_collision_resistance}
 
+
 find_smaller = lambda x, y: x if x < y else y
+
 
 def run_experiment(collision_property:str, hash_method, control_msg=''):
     """
