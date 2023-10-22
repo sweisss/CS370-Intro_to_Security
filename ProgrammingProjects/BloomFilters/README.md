@@ -17,4 +17,4 @@ To deactivate venv:
 deactivate
 ```
 
-Python version Python 3.8.10
+Python version 3.8.10
