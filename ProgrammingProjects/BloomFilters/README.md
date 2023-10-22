@@ -4,14 +4,16 @@ To activate venv:
 source venv/Scripts/activate
 ```
 
+To activate WSLvenv:
+
+```
+source WSLvenv/bin/activate
+```
+
 To deactivate venv:
 
 ```
 deactivate
 ```
 
-To activate WSLvenv:
-
-```
-source WSLvenv/bin/activate
-```
+Python version Python 3.8.10
