@@ -25,6 +25,7 @@ Design Considerations:
     
 Sources:
 https://hur.st/bloomfilter/
+https://hur.st/bloomfilter/?n=14344391&p=0.01&m=&k=3
 https://www.youtube.com/watch?v=gBygn3cVP80
 https://www.interviewcake.com/concept/java/bloom-filter
 """
@@ -77,9 +78,9 @@ class BloomFilter:
         """
         n : Number of different elements (inputs) in the Bloom Filter
         p : Probability of false positives
-        m : Number of bits in Bloom Filter
+        m : Number of bits in Bloom Filter        
         """
-        m = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
+        self.m = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
 
         
 
