@@ -68,11 +68,11 @@ class BloomFilter:
         self.prob_false_pos = p
         self.num_hash_funcs = k
         self.structure = structure
-        self.filter = self._build_base()
+        self.bitmap = self._build_base()
         
     def _build_base(self):
         if self.structure == 'list':
-            return []
+            return [0] * self.bitmap_size
         elif self.structure == 'set':
             return {}
         else:
@@ -100,10 +100,13 @@ class BloomFilter:
         Inserts an element into the Bloom Filter.
         
         Hashes the elemen value and flips the corresponding bits.
-        TODO: finish this implementation
         """
         addrs = self.determine_addrs(element)
         print(addrs)
+        for addr in addrs:
+            print(f'setting addr \t{addr}: {self.bitmap[addr]}')
+            self.bitmap[addr] = 1
+            print(f'set addr \t{addr}: {self.bitmap[addr]}')
 
 
 def load_words(file: str) -> list:
