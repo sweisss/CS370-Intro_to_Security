@@ -23,4 +23,4 @@ deactivate
 ```
 
 WSL: Python version 3.8.10
-Mac: Python version 3.10.10
+Mac: Python version gitri3.10.10
