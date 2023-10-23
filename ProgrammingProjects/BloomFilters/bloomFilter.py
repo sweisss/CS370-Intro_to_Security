@@ -110,7 +110,7 @@ class BloomFilter:
         Hashes the elemen value and flips the corresponding bits.
         """
         addrs = self.determine_addrs(element)
-        print(addrs)
+        debug_print(addrs)
         for addr in addrs:
             debug_print(f'setting addr \t{addr}: {self.bitmap[addr]}')
             self.bitmap[addr] = 1
@@ -141,15 +141,36 @@ def load_words(file: str) -> list:
 
 def main():
     rockyou = load_words('./rockyou.ISO-8859-1.txt')
+    dictionary = load_words('./dictionary.txt')
     # print(rockyou[0:10])
     print(f'len(rockyou): {len(rockyou)}')
     
     bf = BloomFilter(m=len(rockyou), p=0.1, structure='list')
     print(f'bitmap_size: {bf.bitmap_size}')
-    print(f'rockyou[0]: {rockyou[0]}')
-    bf.insert(rockyou[0])
-    print(bf.is_in_filter(rockyou[0]))
-    print(bf.is_in_filter(rockyou[1]))
+    
+    # print(f'rockyou[0]: {rockyou[0]}')
+    # bf.insert(rockyou[0])
+    # print(bf.is_in_filter(rockyou[0]))
+    # print(bf.is_in_filter(rockyou[1]))
+    
+    print('--------')
+    print('Loading rockyou into Bloom Filter')
+    print('--------')
+    for word in rockyou[0:10000]:
+        bf.insert(word)
+        
+    print('All words in rockyou loaded to Bloom Filter')
+    
+    print('--------')
+    print('Checking dictionary words in Bloom Filter')
+    print('--------')
+    
+    for word in dictionary[0:10000]:
+        check = bf.is_in_filter(word)
+        if check is True:
+            print(f'{word} is in the filter')
+            
+    print('Finished checking dictionary words in Bloom Filter')
     
 
 if __name__ == "__main__":
