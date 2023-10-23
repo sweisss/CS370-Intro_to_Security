@@ -28,14 +28,24 @@ https://hur.st/bloomfilter/
 https://www.youtube.com/watch?v=gBygn3cVP80
 https://www.interviewcake.com/concept/java/bloom-filter
 """
+import math
 
 class BloomFilter:
     """
     BloomFilter class manages and maintains a Bloom Filter.
     
     Parameters:
-        size : int
+        m : int
             Determines the size of the Bloom Filter's bitmap.
+        
+        n : int
+            Number of different elements (inputs) in the Bloom Filter.
+            
+        p : float
+            Probability of false positives.
+            
+        k : int
+            Number of hash functions to use.
             
         structure : string
             Determines the underlying data structure of the Bloom Filter.
@@ -47,8 +57,8 @@ class BloomFilter:
 
     TODO: Be more descriptive.
     """
-    def __init__(self, size=64, structure='list'):
-        self.size = int(size)
+    def __init__(self, m=64, n=666, p=0.01, k=3, structure='list'):
+        self.m = int(m)
         self.structure = structure
         self.filter = self._build_base()
         
@@ -60,6 +70,15 @@ class BloomFilter:
         else:
             raise Exception(f"unrecognized structure option: '{self.structure}'")
         
+    def set_optimal_size(self, n, p):
+        """
+        n : Number of different elements (inputs) in the Bloom Filter
+        p : Probability of false positives
+        m : Number of bits in Bloom Filter
+        """
+        m = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
+
+        
 
 def load_words(file: str) -> list:
     with open(file, 'r', encoding='latin-1') as f:
@@ -69,11 +88,12 @@ def load_words(file: str) -> list:
 
 
 def main():
-    # rockyou = load_words('./rockyou.ISO-8859-1.txt')
+    rockyou = load_words('./rockyou.ISO-8859-1.txt')
     # print(rockyou[0:10])
+    print(len(rockyou))
     
-    bf = BloomFilter(structure='list')
-    print(bf.filter)
+    # bf = BloomFilter(structure='list')
+    # print(bf.filter)
     
 
 if __name__ == "__main__":
