@@ -47,7 +47,6 @@ class BloomFilter:
         self.structure = structure
         self.filter = self._build_base()
         
-        
     def _build_base(self):
         if self.structure == 'list':
             return []
@@ -56,7 +55,6 @@ class BloomFilter:
         else:
             raise Exception(f"unrecognized structure option: '{self.structure}'")
         
-
 
 def load_words(file: str) -> list:
     with open(file, 'r', encoding='latin-1') as f:
@@ -72,7 +70,6 @@ def main():
     bf = BloomFilter(structure='list')
     print(bf.filter)
     
-
 
 if __name__ == "__main__":
     main()
