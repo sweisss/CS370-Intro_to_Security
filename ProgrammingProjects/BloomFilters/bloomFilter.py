@@ -25,7 +25,8 @@ Design Considerations:
     
 Sources:
 https://hur.st/bloomfilter/
-https://hur.st/bloomfilter/?n=14344391&p=0.01&m=&k=3
+https://hur.st/bloomfilter/?n=14344391&p=0.1&m=&k=
+https://hur.st/bloomfilter/?n=14344391&p=0.075&m=&k=
 https://www.youtube.com/watch?v=gBygn3cVP80
 https://www.interviewcake.com/concept/java/bloom-filter
 """
@@ -58,7 +59,7 @@ class BloomFilter:
 
     TODO: Be more descriptive.
     """
-    def __init__(self, m=64, n=666, p=0.01, k=3, structure='list'):
+    def __init__(self, m=64, n=666, p=0.1, k=3, structure='list'):
         self.bitmap_size = int(m)
         self.num_elements = n
         self.prob_false_pos = p
@@ -81,7 +82,6 @@ class BloomFilter:
         m : Number of bits in Bloom Filter        
         """
         self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
-
         
 
 def load_words(file: str) -> list:
@@ -97,7 +97,8 @@ def main():
     print(len(rockyou))
     
     bf = BloomFilter(structure='list')
-    bf.set_optimal_size()
+    bf.set_optimal_size(len(rockyou), 0.1)
+    print(bf.bitmap_size)
     
 
 if __name__ == "__main__":
