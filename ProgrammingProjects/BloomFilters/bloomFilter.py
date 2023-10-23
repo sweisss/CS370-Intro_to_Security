@@ -133,6 +133,10 @@ class BloomFilter:
 
 
 def load_words(file: str) -> list:
+    """
+    TODO: remove strip() and find a differnt way to remove newlines
+        dictionary.txt needs to keep trailing whitespace
+    """
     with open(file, 'r', encoding='latin-1') as f:
         words = [word.strip() for word in f.readlines()]
 
