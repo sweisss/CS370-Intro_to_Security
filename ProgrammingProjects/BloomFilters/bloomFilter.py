@@ -115,6 +115,21 @@ class BloomFilter:
             debug_print(f'setting addr \t{addr}: {self.bitmap[addr]}')
             self.bitmap[addr] = 1
             debug_print(f'set addr \t{addr}: {self.bitmap[addr]}')
+            
+    def is_in_filter(self, element):
+        """
+        Takes an element and checkes the filter for the associated bits. 
+        
+        If one of the bits is 0, the element has not been yet been added.
+        If all of the bits are 1, the element might have been added, or it
+        might be a false positive.
+        """
+        addrs = self.determine_addrs(element)
+        for addr in addrs:
+            if self.bitmap[addr] != 1:
+                return False
+        
+        return True
 
 
 def load_words(file: str) -> list:
@@ -133,6 +148,8 @@ def main():
     print(f'bitmap_size: {bf.bitmap_size}')
     print(f'rockyou[0]: {rockyou[0]}')
     bf.insert(rockyou[0])
+    print(bf.is_in_filter(rockyou[0]))
+    print(bf.is_in_filter(rockyou[1]))
     
 
 if __name__ == "__main__":
