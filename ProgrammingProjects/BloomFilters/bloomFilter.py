@@ -25,3 +25,17 @@ Design Considerations:
 """
 
 
+def load_words(file: str) -> list:
+    with open(file, 'r', encoding='latin-1') as f:
+        words = [word.strip() for word in f.readlines()]
+
+    return words
+
+
+def main():
+    rockyou = load_words('./rockyou.ISO-8859-1.txt')
+    print(rockyou[0:10])
+
+
+if __name__ == "__main__":
+    main()
