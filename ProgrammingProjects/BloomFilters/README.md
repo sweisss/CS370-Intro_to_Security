@@ -1,4 +1,9 @@
 # Setup Info
+To create [venv](https://docs.python.org/3/library/venv.html):
+```
+python -m venv /path/to/new/virtual/environment
+```
+
 To activate venv:
 
 ```
