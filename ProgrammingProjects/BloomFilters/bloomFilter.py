@@ -162,7 +162,7 @@ def main():
     debug_print('Checking dictionary words in Bloom Filter')
     debug_print('--------')
     
-    for word in dictionary[0:10000]:
+    for word in dictionary[0:10000]:        # TODO: Make sure to change this limit for final submission!
         check = bf.is_in_filter(word)
         if check is True:
             debug_print(f'{word} is in the filter')
