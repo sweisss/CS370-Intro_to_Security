@@ -1,13 +1,8 @@
+# Setup Info
 To activate venv:
 
 ```
 source venv/Scripts/activate
-```
-
-To deactivate venv:
-
-```
-deactivate
 ```
 
 To activate WSLvenv:
@@ -16,6 +11,16 @@ To activate WSLvenv:
 source WSLvenv/bin/activate
 ```
 
+To activate venv on Mac:
+```
+source venv/bin/activate
+```
+
+To deactivate venv:
+
+```
+deactivate
+```
 #### Python version
 WSL: 3.8.10
 
