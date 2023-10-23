@@ -70,7 +70,7 @@ class BloomFilter:
 
     TODO: Be more descriptive.
     """
-    def __init__(self, m=64, n=None, p=0.1, k=3, structure='list'):
+    def __init__(self, m=64, n=None, p=0.1, k=3, structure='list') -> None:
         self.bitmap_size = int(m)
         self.num_elements = self.set_optimal_size(m, p) if n is None else n
         self.prob_false_pos = p
@@ -86,7 +86,7 @@ class BloomFilter:
         else:
             raise Exception(f"unrecognized structure option: '{self.structure}'")
         
-    def set_optimal_size(self, n, p):
+    def set_optimal_size(self, n, p) -> None:
         """
         n : Number of different elements (inputs) in the Bloom Filter
         p : Probability of false positives
@@ -97,13 +97,13 @@ class BloomFilter:
     def _convert_string_to_SHA256_int(self, element:str):
         return int(SHA256.new(element.encode('utf-8')).hexdigest(), 16)
         
-    def determine_addrs(self, element):       
+    def determine_addrs(self, element) -> list:       
         int_val = self._convert_string_to_SHA256_int(element)
         func = lambda k : (k * int_val) % self.bitmap_size
         
         return [func(k) for k in range(1, self.num_hash_funcs + 1)]
         
-    def insert(self, element):
+    def insert(self, element) -> None:
         """
         Inserts an element into the Bloom Filter.
         
@@ -116,7 +116,7 @@ class BloomFilter:
             self.bitmap[addr] = 1
             debug_print(f'set addr \t{addr}: {self.bitmap[addr]}')
             
-    def is_in_filter(self, element):
+    def is_in_filter(self, element) -> bool:
         """
         Takes an element and checkes the filter for the associated bits. 
         
