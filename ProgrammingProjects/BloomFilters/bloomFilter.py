@@ -59,9 +59,9 @@ class BloomFilter:
 
     TODO: Be more descriptive.
     """
-    def __init__(self, m=64, n=666, p=0.1, k=3, structure='list'):
+    def __init__(self, m=64, n=None, p=0.1, k=3, structure='list'):
         self.bitmap_size = int(m)
-        self.num_elements = n
+        self.num_elements = self.set_optimal_size(m, p) if n is None else n
         self.prob_false_pos = p
         self.num_hash_funcs = k
         self.structure = structure
@@ -83,16 +83,20 @@ class BloomFilter:
         """
         self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
         
+    def determine_addrs(self, element):
+        func = lambda k : (k * hash(element)) % self.bitmap_size
+        return [func(k) for k in range(1, self.num_hash_funcs + 1)]
+        
     def insert(self, element):
         """
         Inserts an element into the Bloom Filter.
         
         Hashes the elemen value and flips the corresponding bits.
+        TODO: finish this implementation
         """
-        addr_1 = hash(element) % self.bitmap_size
-        addr_2 = (2 * hash(element) + 3) % self.bitmap_size
-        print(addr_1, addr_2)
-        
+        addrs = self.determine_addrs(element)
+        print(addrs)
+
 
 def load_words(file: str) -> list:
     with open(file, 'r', encoding='latin-1') as f:
@@ -106,8 +110,7 @@ def main():
     # print(rockyou[0:10])
     print(len(rockyou))
     
-    bf = BloomFilter(structure='list')
-    bf.set_optimal_size(len(rockyou), 0.1)
+    bf = BloomFilter(m=len(rockyou), p=0.1, structure='list')
     print(bf.bitmap_size)
     bf.insert(rockyou[0])
     
