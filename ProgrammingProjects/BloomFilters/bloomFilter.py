@@ -83,6 +83,16 @@ class BloomFilter:
         """
         self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
         
+    def insert(self, element):
+        """
+        Inserts an element into the Bloom Filter.
+        
+        Hashes the elemen value and flips the corresponding bits.
+        """
+        addr_1 = hash(element) % self.bitmap_size
+        addr_2 = (2 * hash(element) + 3) % self.bitmap_size
+        print(addr_1, addr_2)
+        
 
 def load_words(file: str) -> list:
     with open(file, 'r', encoding='latin-1') as f:
@@ -99,6 +109,7 @@ def main():
     bf = BloomFilter(structure='list')
     bf.set_optimal_size(len(rockyou), 0.1)
     print(bf.bitmap_size)
+    bf.insert(rockyou[0])
     
 
 if __name__ == "__main__":
