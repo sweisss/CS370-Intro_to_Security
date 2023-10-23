@@ -22,4 +22,5 @@ To deactivate venv:
 deactivate
 ```
 
-Python version 3.8.10
+WSL: Python version 3.8.10
+Mac: 3.10.10
