@@ -35,6 +35,14 @@ import math
 from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
 
 
+DEBUG = False
+
+
+def debug_print(input):
+    if DEBUG:
+        print(input)
+
+
 class BloomFilter:
     """
     BloomFilter class manages and maintains a Bloom Filter.
@@ -104,9 +112,9 @@ class BloomFilter:
         addrs = self.determine_addrs(element)
         print(addrs)
         for addr in addrs:
-            print(f'setting addr \t{addr}: {self.bitmap[addr]}')
+            debug_print(f'setting addr \t{addr}: {self.bitmap[addr]}')
             self.bitmap[addr] = 1
-            print(f'set addr \t{addr}: {self.bitmap[addr]}')
+            debug_print(f'set addr \t{addr}: {self.bitmap[addr]}')
 
 
 def load_words(file: str) -> list:
