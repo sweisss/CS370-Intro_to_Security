@@ -24,6 +24,39 @@ Design Considerations:
     comparing which values in dictionary.txt are in rockyou.txt (re: reference statistics).
 """
 
+class BloomFilter:
+    """
+    BloomFilter class manages and maintains a Bloom Filter.
+    
+    Parameters:
+        size : int
+            Determines the size of the Bloom Filter's bitmap.
+            
+        structure : string
+            Determines the underlying data structure of the Bloom Filter.
+            Options are 'list' for a list-based Bloom Filter or 
+            'set' for a sorted set. 
+            TODO: decide if using sorted(set) is appropriate
+                or if using the the SortedSet class is better
+                https://grantjenks.com/docs/sortedcontainers/sortedset.html
+
+    TODO: Be more descriptive.
+    """
+    def __init__(self, size=64, structure='list'):
+        self.size = int(size)
+        self.structure = structure
+        self.filter = self._build_base()
+        
+        
+    def _build_base(self):
+        if self.structure == 'list':
+            return []
+        elif self.structure == 'set':
+            return {}
+        else:
+            raise Exception(f"unrecognized structure option: '{self.structure}'")
+        
+
 
 def load_words(file: str) -> list:
     with open(file, 'r', encoding='latin-1') as f:
@@ -33,8 +66,12 @@ def load_words(file: str) -> list:
 
 
 def main():
-    rockyou = load_words('./rockyou.ISO-8859-1.txt')
-    print(rockyou[0:10])
+    # rockyou = load_words('./rockyou.ISO-8859-1.txt')
+    # print(rockyou[0:10])
+    
+    bf = BloomFilter(structure='list')
+    print(bf.filter)
+    
 
 
 if __name__ == "__main__":
