@@ -59,10 +59,10 @@ class BloomFilter:
     TODO: Be more descriptive.
     """
     def __init__(self, m=64, n=666, p=0.01, k=3, structure='list'):
-        self.m = int(m)
-        self.n = n
-        self.p = p
-        self.k = k
+        self.bitmap_size = int(m)
+        self.num_elements = n
+        self.prob_false_pos = p
+        self.num_hash_funcs = k
         self.structure = structure
         self.filter = self._build_base()
         
@@ -80,7 +80,7 @@ class BloomFilter:
         p : Probability of false positives
         m : Number of bits in Bloom Filter        
         """
-        self.m = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
+        self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
 
         
 
@@ -96,8 +96,8 @@ def main():
     # print(rockyou[0:10])
     print(len(rockyou))
     
-    # bf = BloomFilter(structure='list')
-    # print(bf.filter)
+    bf = BloomFilter(structure='list')
+    bf.set_optimal_size()
     
 
 if __name__ == "__main__":
