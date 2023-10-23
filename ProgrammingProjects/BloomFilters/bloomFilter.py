@@ -29,8 +29,11 @@ https://hur.st/bloomfilter/?n=14344391&p=0.1&m=&k=
 https://hur.st/bloomfilter/?n=14344391&p=0.075&m=&k=
 https://www.youtube.com/watch?v=gBygn3cVP80
 https://www.interviewcake.com/concept/java/bloom-filter
+https://pycryptodome.readthedocs.io/en/latest/src/hash/sha256.html
 """
 import math
+from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
+
 
 class BloomFilter:
     """
@@ -83,8 +86,10 @@ class BloomFilter:
         """
         self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
         
-    def determine_addrs(self, element):
-        func = lambda k : (k * hash(element)) % self.bitmap_size
+    def determine_addrs(self, element):        
+        int_val = int(SHA256.new(element.encode('utf-8')).hexdigest(), 16)
+        func = lambda k : (k * int_val) % self.bitmap_size
+        
         return [func(k) for k in range(1, self.num_hash_funcs + 1)]
         
     def insert(self, element):
@@ -108,10 +113,11 @@ def load_words(file: str) -> list:
 def main():
     rockyou = load_words('./rockyou.ISO-8859-1.txt')
     # print(rockyou[0:10])
-    print(len(rockyou))
+    print(f'len(rockyou): {len(rockyou)}')
     
     bf = BloomFilter(m=len(rockyou), p=0.1, structure='list')
-    print(bf.bitmap_size)
+    print(f'bitmap_size: {bf.bitmap_size}')
+    print(f'rockyou[0]: {rockyou[0]}')
     bf.insert(rockyou[0])
     
 
