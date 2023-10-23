@@ -59,6 +59,9 @@ class BloomFilter:
     """
     def __init__(self, m=64, n=666, p=0.01, k=3, structure='list'):
         self.m = int(m)
+        self.n = n
+        self.p = p
+        self.k = k
         self.structure = structure
         self.filter = self._build_base()
         
