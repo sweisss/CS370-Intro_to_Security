@@ -35,7 +35,7 @@ import math
 from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
 
 
-DEBUG = False
+DEBUG = True
 
 
 def debug_print(input):
@@ -110,11 +110,8 @@ class BloomFilter:
         Hashes the elemen value and flips the corresponding bits.
         """
         addrs = self.determine_addrs(element)
-        debug_print(addrs)
         for addr in addrs:
-            debug_print(f'setting addr \t{addr}: {self.bitmap[addr]}')
             self.bitmap[addr] = 1
-            debug_print(f'set addr \t{addr}: {self.bitmap[addr]}')
             
     def is_in_filter(self, element) -> bool:
         """
@@ -134,11 +131,11 @@ class BloomFilter:
 
 def load_words(file: str) -> list:
     """
-    TODO: remove strip() and find a differnt way to remove newlines
-        dictionary.txt needs to keep trailing whitespace
+    Loads words from a text file.
+    Removes the newline character but retains any leading or trailing whitespace.
     """
     with open(file, 'r', encoding='latin-1') as f:
-        words = [word.strip() for word in f.readlines()]
+        words = [word.replace('\n', '') for word in f.readlines()]
 
     return words
 
@@ -146,35 +143,31 @@ def load_words(file: str) -> list:
 def main():
     rockyou = load_words('./rockyou.ISO-8859-1.txt')
     dictionary = load_words('./dictionary.txt')
-    # print(rockyou[0:10])
-    print(f'len(rockyou): {len(rockyou)}')
+    
+    debug_print(rockyou[0:10])
+    debug_print(f'len(rockyou): {len(rockyou)}')
     
     bf = BloomFilter(m=len(rockyou), p=0.1, structure='list')
-    print(f'bitmap_size: {bf.bitmap_size}')
-    
-    # print(f'rockyou[0]: {rockyou[0]}')
-    # bf.insert(rockyou[0])
-    # print(bf.is_in_filter(rockyou[0]))
-    # print(bf.is_in_filter(rockyou[1]))
-    
-    print('--------')
-    print('Loading rockyou into Bloom Filter')
-    print('--------')
+    debug_print(f'bitmap_size: {bf.bitmap_size}')
+        
+    debug_print('--------')
+    debug_print('Loading rockyou into Bloom Filter')
+    debug_print('--------')
     for word in rockyou[0:10000]:
         bf.insert(word)
         
-    print('All words in rockyou loaded to Bloom Filter')
+    debug_print('All words in rockyou loaded to Bloom Filter')
     
-    print('--------')
-    print('Checking dictionary words in Bloom Filter')
-    print('--------')
+    debug_print('--------')
+    debug_print('Checking dictionary words in Bloom Filter')
+    debug_print('--------')
     
     for word in dictionary[0:10000]:
         check = bf.is_in_filter(word)
         if check is True:
-            print(f'{word} is in the filter')
+            debug_print(f'{word} is in the filter')
             
-    print('Finished checking dictionary words in Bloom Filter')
+    debug_print('Finished checking dictionary words in Bloom Filter')
     
 
 if __name__ == "__main__":
