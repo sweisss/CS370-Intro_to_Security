@@ -22,6 +22,11 @@ Design Considerations:
     and false negative in relation to the results of a Bloom Filter.
 - Check out the runtime difference between using a List and a SortedSet when you are
     comparing which values in dictionary.txt are in rockyou.txt (re: reference statistics).
+    
+Sources:
+https://hur.st/bloomfilter/
+https://www.youtube.com/watch?v=gBygn3cVP80
+https://www.interviewcake.com/concept/java/bloom-filter
 """
 
 class BloomFilter:
