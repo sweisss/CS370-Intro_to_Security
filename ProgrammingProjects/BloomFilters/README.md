@@ -11,6 +11,11 @@ To activate WSLvenv:
 source WSLvenv/bin/activate
 ```
 
+To activate venv on Mac:
+```
+source venv/bin/activate
+```
+
 To deactivate venv:
 
 ```
