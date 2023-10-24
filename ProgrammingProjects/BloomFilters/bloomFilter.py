@@ -35,7 +35,8 @@ import math
 from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
 
 
-DEBUG = True
+DEBUG = False
+DEBUG_LIST_LEN = 10000
 
 
 def debug_print(input):
@@ -143,31 +144,63 @@ def load_words(file: str) -> list:
 def main():
     rockyou = load_words('./rockyou.ISO-8859-1.txt')
     dictionary = load_words('./dictionary.txt')
+
+    rockyou = rockyou[0:DEBUG_LIST_LEN] if DEBUG else rockyou
+    dictionary = dictionary[0:DEBUG_LIST_LEN] if DEBUG else dictionary
     
     debug_print(rockyou[0:10])
-    debug_print(f'len(rockyou): {len(rockyou)}')
+    print(f'len(rockyou): {len(rockyou)}')
     
     bf = BloomFilter(m=len(rockyou), p=0.1, structure='list')
     debug_print(f'bitmap_size: {bf.bitmap_size}')
         
     debug_print('--------')
-    debug_print('Loading rockyou into Bloom Filter')
+    print('Loading rockyou into Bloom Filter')
     debug_print('--------')
-    for word in rockyou[0:10000]:
+    for word in rockyou:
         bf.insert(word)
         
-    debug_print('All words in rockyou loaded to Bloom Filter')
+    print('All words in rockyou loaded to Bloom Filter')
+    print(f'{sum(bf.bitmap)} of {(len(bf.bitmap))} bits are used.')
     
     debug_print('--------')
-    debug_print('Checking dictionary words in Bloom Filter')
+    print('Checking dictionary words in Bloom Filter')
     debug_print('--------')
+
+    true_pos = []
+    true_neg = []
+    false_pos = []
+    false_neg = []
     
-    for word in dictionary[0:10000]:        # TODO: Make sure to change this limit for final submission!
+    for word in dictionary:
         check = bf.is_in_filter(word)
-        if check is True:
-            debug_print(f'{word} is in the filter')
-            
-    debug_print('Finished checking dictionary words in Bloom Filter')
+        if check is False:
+            is_in_rockyou = word in rockyou
+            if is_in_rockyou is False:
+                # debug_print(f'{word} is true negative')
+                true_neg.append(word)
+            else:
+                false_neg.append(word)
+                rockyou.remove(word)
+                print(f'removed word {word}')
+                print(f'rockyou len: {len(rockyou)}')
+        elif check is True:
+            # debug_print(f'{word} is in the filter')
+            is_in_rockyou = word in rockyou
+            if is_in_rockyou is False:
+                false_pos.append(word)
+            else:
+                true_pos.append(word)
+                rockyou.remove(word)
+                print(f'removed word {word}')
+                print(f'rockyou len: {len(rockyou)}')
+
+    debug_print('--------')
+    print('Finished checking dictionary words in Bloom Filter')
+    print(f'True Negatives: {len(true_neg)}')
+    print(f'False Negatives: {len(false_neg)}')
+    print(f'True Positives: {len(true_pos)}')
+    print(f'False Postives: {len(false_pos)}')
     
 
 if __name__ == "__main__":
