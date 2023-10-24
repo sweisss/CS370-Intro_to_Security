@@ -35,7 +35,7 @@ import math
 from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
 
 
-DEBUG = False
+DEBUG = True
 DEBUG_LIST_LEN = 10000
 
 
