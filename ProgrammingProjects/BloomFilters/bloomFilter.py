@@ -128,6 +128,47 @@ class BloomFilter:
                 return False
         
         return True
+    
+    def check_validity(self, input_set, checklist):
+        """
+        Checks the bitmap against a set of inputs and a list of words to check.
+        """
+        true_pos = []
+        true_neg = []
+        false_pos = []
+        false_neg = []
+        
+        # Ensure that the input_set is actually a set and not a list
+        input_set = set(input_set)
+                
+        for word in checklist:
+            # Check if the word is in the Bloom Filter
+            is_in_bf = self.is_in_filter(word)
+            # If the word is not in the Bloom Filter
+            if not is_in_bf:
+                is_in_rockyou = word in input_set
+                # If the word is not in the Bloom Filter nor in rockyou
+                if not is_in_rockyou:
+                    true_neg.append(word)
+                # A Bloom Filter should never return a false negative
+                elif is_in_bf:
+                    false_neg.append(word)
+            # If the word is in the Bloom Filter
+            elif is_in_bf:
+                is_in_rockyou = word in input_set
+                # If the word is in the Bloom Filter but not in rockyou
+                if is_in_rockyou is False:
+                    false_pos.append(word)
+                else:
+                    true_pos.append(word)
+                    # Remove the word from the input_set to make the next lookup slightly faster
+                    input_set.remove(word)
+                    debug_print(f'removed word {word}')
+                    debug_print(f'input_set len: {len(input_set)}')
+                    
+        assert len(true_pos) + len(true_neg) + len(false_pos) + len(false_neg) == len(checklist)
+                    
+        return true_pos, true_neg, false_pos, false_neg
 
 
 def load_words(file: str) -> list:
@@ -139,6 +180,7 @@ def load_words(file: str) -> list:
         words = [word.replace('\n', '') for word in f.readlines()]
 
     return words
+
 
 
 def main():
@@ -168,67 +210,8 @@ def main():
     debug_print('--------')
     print('Checking dictionary words in Bloom Filter')
     debug_print('--------')
-
-    true_pos = []
-    true_neg = []
-    false_pos = []
-    false_neg = []
     
-    for word in dictionary:
-        # Check if the word is in the Bloom Filter
-        is_in_bf = bf.is_in_filter(word)
-        # If the word is not in the Bloom Filter
-        if not is_in_bf:
-            is_in_rockyou = word in rockyou_set
-            # If the word is not in the Bloom Filter nor in rockyou
-            if is_in_rockyou is False:
-                true_neg.append(word)
-            # A Bloom Filter should never return a false negative
-            # else:
-                # false_neg.append(word)
-        # If the word is in the Bloom Filter
-        elif is_in_bf:
-            is_in_rockyou = word in rockyou_set
-            # If the word is in the Bloom Filter but not in rockyou
-            if is_in_rockyou is False:
-                false_pos.append(word)
-            else:
-                true_pos.append(word)
-                rockyou_set.remove(word)
-                print(f'removed word {word}')
-                print(f'rockyou_set len: {len(rockyou_set)}')
-          
-    # matches = set()
-    # for word in dictionary:
-    #     # Check for a previous match
-    #     if word in matches:
-    #         continue
-    #     # Check if the word is in rockyou
-    #     elif word_in_rockyou := word in rockyou_set:
-    #         # Check if the word is in the Bloom Filter
-    #         in_bf = bf.is_in_filter(word)
-    #         if in_bf:
-    #             # The word is in both rockyou and the Bloom Filter
-    #             true_pos.append(word)
-    #             rockyou_set.remove(word)
-    #             matches.add(word)
-    #             print(f'Found true pos. Removing word {word}')
-    #             print(f'rockyou is now {len(rockyou_set)} long.')
-    #         # A Bloom Filter should never return a false negative
-    #         # elif not in_bf:
-    #         #     # The word is in rockyou but not the Bloom Filter
-    #         #     true_neg.append(word)
-    #     # If the word is not in rockyou
-    #     elif not word_in_rockyou:
-    #         # Check if the word is in the Bloom Filter
-    #         in_bf = bf.is_in_filter(word)
-    #         if in_bf:
-    #             # If the word is not in rockyou but is in Bloom Filter
-    #             false_pos.append(word)
-    #             matches.add(word)
-    #         elif not in_bf:
-    #             # If the word is not in rockyou and not in Bloom Filter
-    #             true_neg.append(word)
+    true_pos, true_neg, false_pos, false_neg = bf.check_validity(rockyou_set, dictionary)
 
     debug_print('--------')
     print('Finished checking dictionary words in Bloom Filter')
