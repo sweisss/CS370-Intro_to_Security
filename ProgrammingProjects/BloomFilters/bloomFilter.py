@@ -35,7 +35,7 @@ import math
 from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
 
 
-DEBUG = True
+DEBUG = False
 DEBUG_LIST_LEN = 10000
 
 
@@ -174,34 +174,71 @@ def main():
     false_pos = []
     false_neg = []
     
+    # for word in dictionary:
+    #     # How long does bf.is_in_filter() take?
+    #     # Would it make more sense to check this only after checking if word is in rockyou?
+    #     check = bf.is_in_filter(word)
+    #     if check is False:
+    #         # is_in_rockyou = word in rockyou
+    #         is_in_rockyou = word in rockyou_set
+    #         if is_in_rockyou is False:
+    #             # debug_print(f'{word} is true negative')
+    #             true_neg.append(word)
+    #         else:
+    #             # false_neg.append(word)
+    #             # # rockyou.remove(word)
+    #             # rockyou_set.remove(word)
+    #             # print(f'removed word {word}')
+    #             # # print(f'rockyou len: {len(rockyou)}')
+    #             # print(f'rockyou_set len: {len(rockyou_set)}')
+    #             continue
+    #     elif check is True:
+    #         # debug_print(f'{word} is in the filter')
+    #         # is_in_rockyou = word in rockyou
+    #         is_in_rockyou = word in rockyou_set
+    #         if is_in_rockyou is False:
+    #             false_pos.append(word)
+    #             continue
+    #         else:
+    #             true_pos.append(word)
+    #             # rockyou.remove(word)
+    #             rockyou_set.remove(word)
+    #             print(f'removed word {word}')
+    #             # print(f'rockyou len: {len(rockyou)}')
+    #             print(f'rockyou_set len: {len(rockyou_set)}')
+    #             continue
+          
+    matches = set()
     for word in dictionary:
-        check = bf.is_in_filter(word)
-        if check is False:
-            # is_in_rockyou = word in rockyou
-            is_in_rockyou = word in rockyou_set
-            if is_in_rockyou is False:
-                # debug_print(f'{word} is true negative')
-                true_neg.append(word)
-            else:
-                false_neg.append(word)
-                # rockyou.remove(word)
-                rockyou_set.remove(word)
-                print(f'removed word {word}')
-                # print(f'rockyou len: {len(rockyou)}')
-                print(f'rockyou_set len: {len(rockyou_set)}')
-        elif check is True:
-            # debug_print(f'{word} is in the filter')
-            # is_in_rockyou = word in rockyou
-            is_in_rockyou = word in rockyou_set
-            if is_in_rockyou is False:
-                false_pos.append(word)
-            else:
+        # Check for a previous match
+        if word in matches:
+            continue
+        # Check if the word is in rockyou
+        elif word_in_rockyou := word in rockyou_set:
+            # Check if the word is in the Bloom Filter
+            in_bf = bf.is_in_filter(word)
+            if in_bf:
+                # The word is in both rockyou and the Bloom Filter
                 true_pos.append(word)
-                # rockyou.remove(word)
                 rockyou_set.remove(word)
-                print(f'removed word {word}')
-                # print(f'rockyou len: {len(rockyou)}')
-                print(f'rockyou_set len: {len(rockyou_set)}')
+                matches.add(word)
+                print(f'Found true pos. Removing word {word}')
+                print(f'rockyou is now {len(rockyou_set)} long.')
+            # A Bloom Filter should never return a false negative
+            # elif not in_bf:
+            #     # The word is in rockyou but not the Bloom Filter
+            #     true_neg.append(word)
+        # If the word is not in rockyou
+        elif not word_in_rockyou:
+            # Check if the word is in the Bloom Filter
+            in_bf = bf.is_in_filter(word)
+            if in_bf:
+                # If the word is not in rockyou but is in Bloom Filter
+                false_pos.append(word)
+                matches.add(word)
+            elif not in_bf:
+                # If the word is not in rockyou and not in Bloom Filter
+                true_neg.append(word)
 
     debug_print('--------')
     print('Finished checking dictionary words in Bloom Filter')
@@ -209,6 +246,8 @@ def main():
     print(f'False Negatives: {len(false_neg)}')
     print(f'True Positives: {len(true_pos)}')
     print(f'False Postives: {len(false_pos)}')
+    print(f'Total words in dictionary.txt: {len(dictionary)}')
+    assert len(dictionary) == len(true_neg) + len(false_neg) + len(true_pos) + len(false_pos)
     
 
 if __name__ == "__main__":
