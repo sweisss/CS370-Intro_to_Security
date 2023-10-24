@@ -148,6 +148,8 @@ def main():
     rockyou = rockyou[0:DEBUG_LIST_LEN] if DEBUG else rockyou
     dictionary = dictionary[0:DEBUG_LIST_LEN] if DEBUG else dictionary
     
+    rockyou_set = set(rockyou)
+    
     debug_print(rockyou[0:10])
     print(f'len(rockyou): {len(rockyou)}')
     
@@ -175,25 +177,31 @@ def main():
     for word in dictionary:
         check = bf.is_in_filter(word)
         if check is False:
-            is_in_rockyou = word in rockyou
+            # is_in_rockyou = word in rockyou
+            is_in_rockyou = word in rockyou_set
             if is_in_rockyou is False:
                 # debug_print(f'{word} is true negative')
                 true_neg.append(word)
             else:
                 false_neg.append(word)
-                rockyou.remove(word)
+                # rockyou.remove(word)
+                rockyou_set.remove(word)
                 print(f'removed word {word}')
-                print(f'rockyou len: {len(rockyou)}')
+                # print(f'rockyou len: {len(rockyou)}')
+                print(f'rockyou_set len: {len(rockyou_set)}')
         elif check is True:
             # debug_print(f'{word} is in the filter')
-            is_in_rockyou = word in rockyou
+            # is_in_rockyou = word in rockyou
+            is_in_rockyou = word in rockyou_set
             if is_in_rockyou is False:
                 false_pos.append(word)
             else:
                 true_pos.append(word)
-                rockyou.remove(word)
+                # rockyou.remove(word)
+                rockyou_set.remove(word)
                 print(f'removed word {word}')
-                print(f'rockyou len: {len(rockyou)}')
+                # print(f'rockyou len: {len(rockyou)}')
+                print(f'rockyou_set len: {len(rockyou_set)}')
 
     debug_print('--------')
     print('Finished checking dictionary words in Bloom Filter')
