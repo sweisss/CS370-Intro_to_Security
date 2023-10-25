@@ -61,13 +61,23 @@ class BloomFilter:
             
         k : int
             Number of hash functions to use.
+            
+        hash_method : module
+            Takes a hashing module such as SHA256, SHA512, MD5, etc.
     """
-    def __init__(self, m=64, n=None, p=0.1, k=3) -> None:
+    def __init__(self, m=64, n=None, p=0.1, k=3, hash_method=None) -> None:
         self.bitmap_size = int(m)
         self.num_elements = self.set_optimal_size(m, p) if n is None else n
         self.prob_false_pos = p
         self.num_hash_funcs = k
         self.bitmap = self._build_base()
+        self.hash_method = hash_method
+        self.hash_name = self.get_hash_name(hash_method)
+        
+    def get_hash_name(self, hash_method):
+        if not hash_method:
+            raise Exception('please specify a hash method')
+        return hash_method.__name__.split(".")[2]
         
     def _build_base(self):
         return [0] * self.bitmap_size
@@ -79,16 +89,16 @@ class BloomFilter:
         """
         self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
         
-    def _convert_string_to_hashed_int(self, method, element:str):
+    def _convert_string_to_hashed_int(self, element:str):
         element = str(element)
-        return int(method.new(element.encode('utf-8')).hexdigest(), 16)
+        return int(self.hash_method.new(element.encode('utf-8')).hexdigest(), 16)
         
     def determine_addrs(self, element) -> list:
         """
         Creates a list of bitmap addresses based on the bitmap size and
         the pre-determined number of hash functions k (self.num_hash_funcs)
         """
-        int_val = self._convert_string_to_hashed_int(MD5, element)
+        int_val = self._convert_string_to_hashed_int(element)
         func = lambda k : (k * int_val + k) % self.bitmap_size
         
         return [func(k) for k in range(1, self.num_hash_funcs + 1)]
@@ -189,11 +199,11 @@ def main():
     finish_load_words_time = timeit.default_timer()
     print(f'Total time to load files: {(finish_load_words_time - start_load_words_time):.4f} s')
     
-    bf = BloomFilter(m=len(rockyou), p=0.1)
+    bf = BloomFilter(m=len(rockyou), p=0.1, hash_method=MD5)
     debug_print(f'bitmap_size: {bf.bitmap_size}')
         
     debug_print('--------')
-    print('Loading rockyou into Bloom Filter...')
+    print(f'Loading rockyou into Bloom Filter using hash method {bf.hash_name}...')
     debug_print('--------')
 
     start_bf_insert = timeit.default_timer()
