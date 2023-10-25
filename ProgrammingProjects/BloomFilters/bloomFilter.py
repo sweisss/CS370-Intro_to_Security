@@ -79,16 +79,16 @@ class BloomFilter:
         """
         self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
         
-    def _convert_string_to_SHA256_int(self, element:str):
+    def _convert_string_to_hashed_int(self, method, element:str):
         element = str(element)
-        return int(SHA256.new(element.encode('utf-8')).hexdigest(), 16)
+        return int(method.new(element.encode('utf-8')).hexdigest(), 16)
         
     def determine_addrs(self, element) -> list:
         """
         Creates a list of bitmap addresses based on the bitmap size and
         the pre-determined number of hash functions k (self.num_hash_funcs)
         """
-        int_val = self._convert_string_to_SHA256_int(element)
+        int_val = self._convert_string_to_hashed_int(MD5, element)
         func = lambda k : (k * int_val + k) % self.bitmap_size
         
         return [func(k) for k in range(1, self.num_hash_funcs + 1)]
