@@ -221,7 +221,6 @@ def main():
     print(f'{sum(bf.bitmap)} of {(len(bf.bitmap))} bits are used.')
     print(f'Total time for bf.insert(): {(finish_bf_insert - start_bf_insert):4f} s')
 
-    
     debug_print('--------')
     print('Checking dictionary words in Bloom Filter...')
     debug_print('--------')
