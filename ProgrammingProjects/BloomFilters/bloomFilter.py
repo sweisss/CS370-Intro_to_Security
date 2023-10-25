@@ -61,38 +61,21 @@ class BloomFilter:
             
         k : int
             Number of hash functions to use.
-            
-        structure : string
-            Determines the underlying data structure of the Bloom Filter.
-            Options are 'list' for a list-based Bloom Filter or 
-            'set' for a sorted set. 
-            TODO: decide if using sorted(set) is appropriate
-                or if using the the SortedSet class is better
-                https://grantjenks.com/docs/sortedcontainers/sortedset.html
-
-    TODO: Be more descriptive.
     """
-    def __init__(self, m=64, n=None, p=0.1, k=3, structure='list') -> None:
+    def __init__(self, m=64, n=None, p=0.1, k=3) -> None:
         self.bitmap_size = int(m)
         self.num_elements = self.set_optimal_size(m, p) if n is None else n
         self.prob_false_pos = p
         self.num_hash_funcs = k
-        self.structure = structure
         self.bitmap = self._build_base()
         
     def _build_base(self):
-        if self.structure == 'list':
-            return [0] * self.bitmap_size
-        elif self.structure == 'set':
-            return {}
-        else:
-            raise Exception(f"unrecognized structure option: '{self.structure}'")
-        
+        return [0] * self.bitmap_size
+
     def set_optimal_size(self, n, p) -> None:
         """
         n : Number of different elements (inputs) in the Bloom Filter
         p : Probability of false positives
-        m : Number of bits in Bloom Filter        
         """
         self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
         
@@ -100,7 +83,7 @@ class BloomFilter:
         element = str(element)
         return int(SHA256.new(element.encode('utf-8')).hexdigest(), 16)
         
-    def determine_addrs(self, element) -> list:       
+    def determine_addrs(self, element) -> list:    
         int_val = self._convert_string_to_SHA256_int(element)
         func = lambda k : (k * int_val + k) % self.bitmap_size
         
@@ -186,7 +169,6 @@ def load_words(file: str) -> list:
 
 def main():
     start_load_words_time = timeit.default_timer()
-    # print(f'start_load_words_time: {start_load_words_time}')
 
     rockyou = load_words('./rockyou.ISO-8859-1.txt')
     dictionary = load_words('./dictionary.txt')
@@ -201,9 +183,9 @@ def main():
     print(f'len(rockyou_set): {len(rockyou_set)}')
 
     finish_load_words_time = timeit.default_timer()
-    print(f'Total time for load_words: {(finish_load_words_time - start_load_words_time):4f} s')
+    print(f'Total time to load files: {(finish_load_words_time - start_load_words_time):4f} s')
     
-    bf = BloomFilter(m=len(rockyou), p=0.1, structure='list')
+    bf = BloomFilter(m=len(rockyou), p=0.1)
     debug_print(f'bitmap_size: {bf.bitmap_size}')
         
     debug_print('--------')
@@ -219,7 +201,7 @@ def main():
     
     print('All words in rockyou loaded to Bloom Filter')
     print(f'{sum(bf.bitmap)} of {(len(bf.bitmap))} bits are used.')
-    print(f'Total time for bf.insert(): {(finish_bf_insert - start_bf_insert):4f} s')
+    print(f'Total time to fill Bloom Filter: {(finish_bf_insert - start_bf_insert):4f} s')
 
     debug_print('--------')
     print('Checking dictionary words in Bloom Filter...')
