@@ -33,6 +33,7 @@ https://pycryptodome.readthedocs.io/en/latest/src/hash/sha256.html
 """
 import math
 from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
+import timeit
 
 
 DEBUG = False
@@ -96,11 +97,12 @@ class BloomFilter:
         self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
         
     def _convert_string_to_SHA256_int(self, element:str):
+        element = str(element)
         return int(SHA256.new(element.encode('utf-8')).hexdigest(), 16)
         
     def determine_addrs(self, element) -> list:       
         int_val = self._convert_string_to_SHA256_int(element)
-        func = lambda k : (k * int_val) % self.bitmap_size
+        func = lambda k : (k * int_val + k) % self.bitmap_size
         
         return [func(k) for k in range(1, self.num_hash_funcs + 1)]
         
@@ -182,8 +184,10 @@ def load_words(file: str) -> list:
     return words
 
 
-
 def main():
+    start_load_words_time = timeit.default_timer()
+    # print(f'start_load_words_time: {start_load_words_time}')
+
     rockyou = load_words('./rockyou.ISO-8859-1.txt')
     dictionary = load_words('./dictionary.txt')
 
@@ -194,24 +198,39 @@ def main():
     
     debug_print(rockyou[0:10])
     print(f'len(rockyou): {len(rockyou)}')
+    print(f'len(rockyou_set): {len(rockyou_set)}')
+
+    finish_load_words_time = timeit.default_timer()
+    print(f'Total time for load_words: {(finish_load_words_time - start_load_words_time):4f} s')
     
     bf = BloomFilter(m=len(rockyou), p=0.1, structure='list')
     debug_print(f'bitmap_size: {bf.bitmap_size}')
         
     debug_print('--------')
-    print('Loading rockyou into Bloom Filter')
+    print('Loading rockyou into Bloom Filter...')
     debug_print('--------')
+
+    start_bf_insert = timeit.default_timer()
+    
     for word in rockyou:
         bf.insert(word)
-        
+    
+    finish_bf_insert = timeit.default_timer()    
+    
     print('All words in rockyou loaded to Bloom Filter')
     print(f'{sum(bf.bitmap)} of {(len(bf.bitmap))} bits are used.')
+    print(f'Total time for bf.insert(): {(finish_bf_insert - start_bf_insert):4f} s')
+
     
     debug_print('--------')
-    print('Checking dictionary words in Bloom Filter')
+    print('Checking dictionary words in Bloom Filter...')
     debug_print('--------')
+
+    start_checking_dictionary = timeit.default_timer()
     
     true_pos, true_neg, false_pos, false_neg = bf.check_validity(rockyou_set, dictionary)
+
+    finish_checking_dictionary = timeit.default_timer()
 
     debug_print('--------')
     print('Finished checking dictionary words in Bloom Filter')
@@ -221,7 +240,10 @@ def main():
     print(f'False Postives: {len(false_pos)}')
     print(f'Total words in dictionary.txt: {len(dictionary)}')
     assert len(dictionary) == len(true_neg) + len(false_neg) + len(true_pos) + len(false_pos)
-    
+
+    print(f'Total time checking dictionary: {(finish_checking_dictionary - start_checking_dictionary):4f} s')
+    print(f'Total time running program: {(finish_checking_dictionary - start_load_words_time):4f} s')
+
 
 if __name__ == "__main__":
     main()
