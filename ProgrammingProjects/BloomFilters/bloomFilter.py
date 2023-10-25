@@ -187,7 +187,7 @@ def main():
     print(f'len(rockyou_set): {len(rockyou_set)}')
 
     finish_load_words_time = timeit.default_timer()
-    print(f'Total time to load files: {(finish_load_words_time - start_load_words_time):4f} s')
+    print(f'Total time to load files: {(finish_load_words_time - start_load_words_time):.4f} s')
     
     bf = BloomFilter(m=len(rockyou), p=0.1)
     debug_print(f'bitmap_size: {bf.bitmap_size}')
@@ -205,7 +205,7 @@ def main():
     
     print('All words in rockyou loaded to Bloom Filter')
     print(f'{sum(bf.bitmap)} of {(len(bf.bitmap))} bits are used.')
-    print(f'Total time to fill Bloom Filter: {(finish_bf_insert - start_bf_insert):4f} s')
+    print(f'Total time to fill Bloom Filter: {(finish_bf_insert - start_bf_insert):.4f} s')
 
     debug_print('--------')
     print('Checking dictionary words in Bloom Filter...')
@@ -226,8 +226,8 @@ def main():
     print(f'Total words in dictionary.txt: {len(dictionary)}')
     assert len(dictionary) == len(true_neg) + len(false_neg) + len(true_pos) + len(false_pos)
 
-    print(f'Total time checking dictionary: {(finish_checking_dictionary - start_checking_dictionary):4f} s')
-    print(f'Total time running program: {(finish_checking_dictionary - start_load_words_time):4f} s')
+    print(f'Total time checking dictionary: {(finish_checking_dictionary - start_checking_dictionary):.4f} s')
+    print(f'Total time running program: {(finish_checking_dictionary - start_load_words_time):.4f} s')
 
 
 if __name__ == "__main__":
