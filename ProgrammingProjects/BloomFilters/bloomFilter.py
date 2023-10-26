@@ -150,7 +150,7 @@ class BloomFilter:
                 if not is_in_rockyou:
                     true_neg.append(word)
                 # A Bloom Filter should never return a false negative
-                elif is_in_bf:
+                elif is_in_rockyou:
                     false_neg.append(word)
             # If the word is in the Bloom Filter
             elif is_in_bf:
