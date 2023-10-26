@@ -127,7 +127,7 @@ class BloomFilter:
                 return False
         
         return True
-    
+
     def check_validity(self, input_set, checklist):
         """
         Checks the bitmap against a set of inputs and a list of words to check.
@@ -143,9 +143,9 @@ class BloomFilter:
         for word in checklist:
             # Check if the word is in the Bloom Filter
             is_in_bf = self.is_in_filter(word)
+            is_in_rockyou = word in input_set
             # If the word is not in the Bloom Filter
             if not is_in_bf:
-                is_in_rockyou = word in input_set
                 # If the word is not in the Bloom Filter nor in rockyou
                 if not is_in_rockyou:
                     true_neg.append(word)
@@ -154,9 +154,8 @@ class BloomFilter:
                     false_neg.append(word)
             # If the word is in the Bloom Filter
             elif is_in_bf:
-                is_in_rockyou = word in input_set
                 # If the word is in the Bloom Filter but not in rockyou
-                if is_in_rockyou is False:
+                if not is_in_rockyou:
                     false_pos.append(word)
                 else:
                     true_pos.append(word)
