@@ -49,28 +49,28 @@ class BloomFilter:
     """
     BloomFilter class manages and maintains a Bloom Filter.
     
-    Parameters:
-        m : int
-            Determines the size of the Bloom Filter's bitmap.
-        
+    Parameters:        
         n : int
             Number of different elements (inputs) in the Bloom Filter.
-            
+        
         p : float
             Probability of false positives.
-            
+
+        m : int
+            Determines the size of the Bloom Filter's bitmap.
+
         k : int
             Number of hash functions to use.
             
         hash_method : module
             Takes a hashing module such as SHA256, SHA512, MD5, etc.
     """
-    def __init__(self, m=64, n=None, p=0.1, k=3, hash_method=None) -> None:
-        self.bitmap_size = int(m)
-        self.num_elements = self.set_optimal_size(m, p) if n is None else n
+    def __init__(self, n=None, p=0.1, m=None, k=None, hash_method=None) -> None:
+        self.num_elements = n
+        self.bitmap_size = self.set_optimal_size(n, p) if m is None else m
         self.prob_false_pos = p
-        self.num_hash_funcs = k
-        self.bitmap = self._build_base()
+        self.bitmap = self._build_base(self.bitmap_size)        
+        self.num_hash_funcs = self.set_optimal_k(self.bitmap_size, self.num_elements) if k is None else k
         self.hash_method = hash_method
         self.hash_name = self.get_hash_name(hash_method)
         
@@ -79,15 +79,22 @@ class BloomFilter:
             raise Exception('please specify a hash method')
         return hash_method.__name__.split(".")[2]
         
-    def _build_base(self):
-        return [0] * self.bitmap_size
+    def _build_base(self, bitmap_size):
+        return [0] * bitmap_size
 
     def set_optimal_size(self, n, p) -> None:
         """
         n : Number of different elements (inputs) in the Bloom Filter
         p : Probability of false positives
         """
-        self.bitmap_size = math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
+        return math.ceil((n * math.log(p)) / math.log(1 / math.pow(2, math.log(2))))
+
+    def set_optimal_k(self, m, n):
+        """
+        m : Size of the Bloom Filter's bitmap
+        n : Number of different elements (inputs) in the Bloom Filter
+        """
+        return round((m / n) * math.log(2))
         
     def _convert_string_to_hashed_int(self, element:str):
         element = str(element)
@@ -222,8 +229,8 @@ def main():
     finish_load_words_time = timeit.default_timer()
     print(f'Total time to load files: {(finish_load_words_time - start_load_words_time):.4f} seconds')
     
-    # bf = BloomFilter(m=len(rockyou), p=0.1, hash_method=MD5)
-    bf = BloomFilter(m=len(rockyou), p=0.075, hash_method=MD5)
+    # bf = BloomFilter(n=len(rockyou), p=0.1, hash_method=MD5)
+    bf = BloomFilter(n=len(rockyou), p=0.075, hash_method=MD5)
     debug_print(f'bitmap_size: {bf.bitmap_size}')
         
     debug_print('--------')
