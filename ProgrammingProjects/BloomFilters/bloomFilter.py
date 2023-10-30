@@ -73,6 +73,10 @@ class BloomFilter:
         self.bitmap = self._build_base()
         self.hash_method = hash_method
         self.hash_name = self.get_hash_name(hash_method)
+        self.true_pos = []
+        self.true_neg = []
+        self.false_pos = []
+        self.false_neg = []
         
     def get_hash_name(self, hash_method):
         if not hash_method:
@@ -127,15 +131,25 @@ class BloomFilter:
                 return False
         
         return True
+    
+    def reset_statistics(self):
+        self.true_pos.clear()
+        self.true_neg.clear()
+        self.false_pos.clear()
+        self.false_neg.clear()
+
+    def print_statistics(self):
+        total_words = len(self.true_pos) + len(self.true_neg) + len(self.false_pos) + len(self.false_neg)
+        print(f'True Negatives: {len(self.true_neg)} words; {(len(self.true_neg) / total_words * 100):.2f}%')
+        print(f'False Negatives: {len(self.false_neg)} words; {(len(self.false_neg) / total_words * 100):.2f}%')
+        print(f'True Positives: {len(self.true_pos)} words; {(len(self.true_pos) / total_words * 100):.2f}%')
+        print(f'False Postives: {len(self.false_pos)} words; {(len(self.false_pos) / total_words * 100):.2f}%')
 
     def check_validity(self, input_set, checklist):
         """
         Checks the bitmap against a set of inputs and a list of words to check.
         """
-        true_pos = []
-        true_neg = []
-        false_pos = []
-        false_neg = []
+        self.reset_statistics()
         
         # Ensure that the input_set is actually a set and not a list
         input_set = set(input_set)
@@ -148,26 +162,24 @@ class BloomFilter:
             if not is_in_bf:
                 # If the word is not in the Bloom Filter nor in rockyou
                 if not is_in_rockyou:
-                    true_neg.append(word)
+                    self.true_neg.append(word)
                 # A Bloom Filter should never return a false negative
                 elif is_in_rockyou:
-                    false_neg.append(word)
+                    self.false_neg.append(word)
             # If the word is in the Bloom Filter
             elif is_in_bf:
                 # If the word is in the Bloom Filter but not in rockyou
                 if not is_in_rockyou:
-                    false_pos.append(word)
+                    self.false_pos.append(word)
                 else:
-                    true_pos.append(word)
+                    self.true_pos.append(word)
                     # Remove the word from the input_set to make the next lookup slightly faster
                     input_set.remove(word)
                     debug_print(f'removed word {word}')
                     debug_print(f'input_set len: {len(input_set)}')
                     
-        assert len(true_pos) + len(true_neg) + len(false_pos) + len(false_neg) == len(checklist)
+        assert len(self.true_pos) + len(self.true_neg) + len(self.false_pos) + len(self.false_neg) == len(checklist)
                     
-        return true_pos, true_neg, false_pos, false_neg
-
 
 def load_words(file: str) -> list:
     """
@@ -224,18 +236,14 @@ def main():
 
     start_checking_dictionary = timeit.default_timer()
     
-    true_pos, true_neg, false_pos, false_neg = bf.check_validity(rockyou_set, dictionary)
+    bf.check_validity(rockyou_set, dictionary)
 
     finish_checking_dictionary = timeit.default_timer()
 
     debug_print('--------')
     print('Finished checking dictionary words in Bloom Filter')
-    print(f'True Negatives: {len(true_neg)}')
-    print(f'False Negatives: {len(false_neg)}')
-    print(f'True Positives: {len(true_pos)}')
-    print(f'False Postives: {len(false_pos)}')
+    bf.print_statistics()
     print(f'Total words in dictionary.txt: {len(dictionary)}')
-    assert len(dictionary) == len(true_neg) + len(false_neg) + len(true_pos) + len(false_pos)
 
     print(f'Total time checking dictionary: {(finish_checking_dictionary - start_checking_dictionary):.4f} seconds')
     print(f'Total time running program: {(finish_checking_dictionary - start_load_words_time):.4f} seconds')
