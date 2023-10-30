@@ -136,7 +136,7 @@ class StatisticsTracker:
     def __init__(self) -> None:
         self.counts = {'True Positives': [],
                         'True Negatives': [],
-                        'False Postives': [],
+                        'False Positives': [],
                         'False Negatives': []}
                     
     def reset_statistics(self):
@@ -148,6 +148,9 @@ class StatisticsTracker:
 
         for k, v in self.counts.items():
             print(f'{k}: {len(v)} words; {(len(v) / total_words * 100):.2f}%')
+
+        tp_fp_ratio = len(self.counts["True Positives"]) / len(self.counts["False Positives"])
+        print(f'Ratio of True to False Positives: {tp_fp_ratio:.2f}')
 
     def check_validity(self, input_set, checklist, bf:BloomFilter):
         """
@@ -178,7 +181,7 @@ class StatisticsTracker:
             elif is_in_bf:
                 # If the word is in the Bloom Filter but not in rockyou
                 if not is_in_rockyou:
-                    self.counts['False Postives'].append(word)
+                    self.counts['False Positives'].append(word)
                 else:
                     self.counts['True Positives'].append(word)
                     # Remove the word from the input_set to make the next lookup slightly faster
