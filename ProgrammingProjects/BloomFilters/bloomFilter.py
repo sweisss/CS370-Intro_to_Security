@@ -73,10 +73,10 @@ class BloomFilter:
         self.bitmap = self._build_base()
         self.hash_method = hash_method
         self.hash_name = self.get_hash_name(hash_method)
-        self.true_pos = []
-        self.true_neg = []
-        self.false_pos = []
-        self.false_neg = []
+        self.counts = {'True Positives': [],
+                       'True Negatives': [],
+                       'False Postives': [],
+                       'False Negatives': []}
         
     def get_hash_name(self, hash_method):
         if not hash_method:
@@ -133,17 +133,14 @@ class BloomFilter:
         return True
     
     def reset_statistics(self):
-        self.true_pos.clear()
-        self.true_neg.clear()
-        self.false_pos.clear()
-        self.false_neg.clear()
+        for k, _ in self.counts.items():
+            self.counts[k].clear()
 
-    def print_statistics(self):
-        total_words = len(self.true_pos) + len(self.true_neg) + len(self.false_pos) + len(self.false_neg)
-        print(f'True Negatives: {len(self.true_neg)} words; {(len(self.true_neg) / total_words * 100):.2f}%')
-        print(f'False Negatives: {len(self.false_neg)} words; {(len(self.false_neg) / total_words * 100):.2f}%')
-        print(f'True Positives: {len(self.true_pos)} words; {(len(self.true_pos) / total_words * 100):.2f}%')
-        print(f'False Postives: {len(self.false_pos)} words; {(len(self.false_pos) / total_words * 100):.2f}%')
+    def print_statistics(self):        
+        total_words = sum([len(v) for v in self.counts.values()])
+
+        for k, v in self.counts.items():
+            print(f'{k}: {len(v)} words; {(len(v) / total_words * 100):.2f}%')
 
     def check_validity(self, input_set, checklist):
         """
@@ -162,23 +159,23 @@ class BloomFilter:
             if not is_in_bf:
                 # If the word is not in the Bloom Filter nor in rockyou
                 if not is_in_rockyou:
-                    self.true_neg.append(word)
+                    self.counts['True Negatives'].append(word)
                 # A Bloom Filter should never return a false negative
                 elif is_in_rockyou:
-                    self.false_neg.append(word)
+                    self.counts['False Negatives'].append(word)
             # If the word is in the Bloom Filter
             elif is_in_bf:
                 # If the word is in the Bloom Filter but not in rockyou
                 if not is_in_rockyou:
-                    self.false_pos.append(word)
+                    self.counts['False Postives'].append(word)
                 else:
-                    self.true_pos.append(word)
+                    self.counts['True Positives'].append(word)
                     # Remove the word from the input_set to make the next lookup slightly faster
                     input_set.remove(word)
                     debug_print(f'removed word {word}')
                     debug_print(f'input_set len: {len(input_set)}')
                     
-        assert len(self.true_pos) + len(self.true_neg) + len(self.false_pos) + len(self.false_neg) == len(checklist)
+        assert sum([len(v) for v in self.counts.values()]) == len(checklist)
                     
 
 def load_words(file: str) -> list:
