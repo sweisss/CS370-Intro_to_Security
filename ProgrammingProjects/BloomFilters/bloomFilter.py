@@ -73,10 +73,6 @@ class BloomFilter:
         self.bitmap = self._build_base()
         self.hash_method = hash_method
         self.hash_name = self.get_hash_name(hash_method)
-        self.counts = {'True Positives': [],
-                       'True Negatives': [],
-                       'False Postives': [],
-                       'False Negatives': []}
         
     def get_hash_name(self, hash_method):
         if not hash_method:
@@ -131,9 +127,20 @@ class BloomFilter:
                 return False
         
         return True
-    
+
+
+class StatisticsTracker:
+    """
+    Keeps track of the counts and statistics of a Bloom Filter
+    """
+    def __init__(self) -> None:
+        self.counts = {'True Positives': [],
+                        'True Negatives': [],
+                        'False Postives': [],
+                        'False Negatives': []}
+                    
     def reset_statistics(self):
-        for k, _ in self.counts.items():
+        for k in self.counts.keys():
             self.counts[k].clear()
 
     def print_statistics(self):        
@@ -142,9 +149,13 @@ class BloomFilter:
         for k, v in self.counts.items():
             print(f'{k}: {len(v)} words; {(len(v) / total_words * 100):.2f}%')
 
-    def check_validity(self, input_set, checklist):
+    def check_validity(self, input_set, checklist, bf:BloomFilter):
         """
-        Checks the bitmap against a set of inputs and a list of words to check.
+        Checks the bitmap of a Bloom Filter against a set of inputs and a list of words to check.
+
+        imput_set: A set of known inputs to the Bloom Filter
+        
+        checklist: A list of words to check against the Bloom Filter's bitmap
         """
         self.reset_statistics()
         
@@ -153,7 +164,7 @@ class BloomFilter:
                 
         for word in checklist:
             # Check if the word is in the Bloom Filter
-            is_in_bf = self.is_in_filter(word)
+            is_in_bf = bf.is_in_filter(word)
             is_in_rockyou = word in input_set
             # If the word is not in the Bloom Filter
             if not is_in_bf:
@@ -176,7 +187,7 @@ class BloomFilter:
                     debug_print(f'input_set len: {len(input_set)}')
                     
         assert sum([len(v) for v in self.counts.values()]) == len(checklist)
-                    
+
 
 def load_words(file: str) -> list:
     """
@@ -232,13 +243,16 @@ def main():
 
     start_checking_dictionary = timeit.default_timer()
     
-    bf.check_validity(rockyou_set, dictionary)
+    stat_tracker = StatisticsTracker()
+    stat_tracker.check_validity(rockyou_set, dictionary, bf)
 
     finish_checking_dictionary = timeit.default_timer()
 
     debug_print('--------')
     print('Finished checking dictionary words in Bloom Filter')
-    bf.print_statistics()
+    print('Results')
+    print('--------')
+    stat_tracker.print_statistics()
     print(f'Total words in dictionary.txt: {len(dictionary)}')
 
     print(f'Total time checking dictionary: {(finish_checking_dictionary - start_checking_dictionary):.4f} seconds')
