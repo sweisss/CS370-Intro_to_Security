@@ -222,11 +222,12 @@ def main():
     finish_load_words_time = timeit.default_timer()
     print(f'Total time to load files: {(finish_load_words_time - start_load_words_time):.4f} seconds')
     
-    bf = BloomFilter(m=len(rockyou), p=0.1, hash_method=MD5)
+    # bf = BloomFilter(m=len(rockyou), p=0.1, hash_method=MD5)
+    bf = BloomFilter(m=len(rockyou), p=0.075, hash_method=MD5)
     debug_print(f'bitmap_size: {bf.bitmap_size}')
         
     debug_print('--------')
-    print(f'Loading rockyou into Bloom Filter using hash method {bf.hash_name}...')
+    print(f'Loading rockyou into Bloom Filter using {bf.num_hash_funcs} variations of hash method {bf.hash_name}...')
     debug_print('--------')
 
     start_bf_insert = timeit.default_timer()
@@ -237,7 +238,7 @@ def main():
     finish_bf_insert = timeit.default_timer()    
     
     print('All words in rockyou loaded to Bloom Filter')
-    print(f'{sum(bf.bitmap)} of {(len(bf.bitmap))} bits are used.')
+    print(f'{sum(bf.bitmap)} of {(len(bf.bitmap))} bits are used. ({(sum(bf.bitmap)/len(bf.bitmap)):.2f}%)')
     print(f'Total time to fill Bloom Filter: {(finish_bf_insert - start_bf_insert):.4f} seconds')
 
     debug_print('--------')
