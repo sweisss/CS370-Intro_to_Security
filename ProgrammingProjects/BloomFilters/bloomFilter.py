@@ -203,8 +203,7 @@ def main():
     rockyou_set = set(rockyou)
     
     debug_print(rockyou[0:10])
-    print(f'len(rockyou): {len(rockyou)}')
-    print(f'len(rockyou_set): {len(rockyou_set)}')
+    print(f'Words in rockyou: {len(rockyou_set)}')
 
     finish_load_words_time = timeit.default_timer()
     print(f'Total time to load files: {(finish_load_words_time - start_load_words_time):.4f} seconds')
