@@ -183,6 +183,8 @@ def load_words(file: str) -> list:
 def main():
     start_load_words_time = timeit.default_timer()
 
+    print('Loading words from text files. This may take a minute...')
+
     rockyou = load_words('./rockyou.ISO-8859-1.txt')
     dictionary = load_words('./dictionary.txt')
 
