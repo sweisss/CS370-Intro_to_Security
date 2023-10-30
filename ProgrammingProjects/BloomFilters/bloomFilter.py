@@ -36,6 +36,9 @@ from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
 import timeit
 
 
+P = 0.075
+HASH_METHOD = MD5
+
 DEBUG = False
 DEBUG_LIST_LEN = 10000
 
@@ -54,7 +57,7 @@ class BloomFilter:
             Number of different elements (inputs) in the Bloom Filter.
         
         p : float
-            Probability of false positives.
+            Probability of false positives, fraction between 0 and 1 indicating 1-in-p.
 
         m : int
             Determines the size of the Bloom Filter's bitmap.
@@ -229,12 +232,12 @@ def main():
     finish_load_words_time = timeit.default_timer()
     print(f'Total time to load files: {(finish_load_words_time - start_load_words_time):.4f} seconds')
     
-    # bf = BloomFilter(n=len(rockyou), p=0.1, hash_method=MD5)
-    bf = BloomFilter(n=len(rockyou), p=0.075, hash_method=MD5)
+    bf = BloomFilter(n=len(rockyou), p=P, hash_method=HASH_METHOD)
     debug_print(f'bitmap_size: {bf.bitmap_size}')
         
     debug_print('--------')
-    print(f'Loading rockyou into Bloom Filter using {bf.num_hash_funcs} variations of hash method {bf.hash_name}...')
+    print(f'Loading rockyou into Bloom Filter using {bf.num_hash_funcs} variations of hash method {bf.hash_name} '\
+          f'with target collision probability p = {P} (1 in {int(1 / P)})...')
     debug_print('--------')
 
     start_bf_insert = timeit.default_timer()
