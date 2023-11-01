@@ -37,7 +37,7 @@ import timeit
 
 
 ########################################################
-# Constants can be modified to effect the performance. #
+# Constants can be modified to affect the performance. #
 ########################################################
 P = 0.01
 HASH_METHOD = MD5
