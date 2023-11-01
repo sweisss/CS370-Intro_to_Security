@@ -36,12 +36,15 @@ from Crypto.Hash import SHA256, MD5, SHA512, SHA3_512
 import timeit
 
 
-P = 0.075
+########################################################
+# Constants can be modified to affect the performance. #
+########################################################
+P = 0.01
 HASH_METHOD = MD5
 
 DEBUG = False
 DEBUG_LIST_LEN = 10000
-
+########################################################
 
 def debug_print(input):
     if DEBUG:
