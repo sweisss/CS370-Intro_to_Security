@@ -29,6 +29,7 @@ from qrcode.image.pure import PyPNGImage
 
 
 DEBUG = True
+TEST_DATA = 'Hello World!'
 
 
 def display_test_code():
@@ -89,12 +90,12 @@ def print_usage():
     -h, --help               give this help list""")
 
 
-def generate_qr():
+def generate_qr(data='Hellow World!'):
     """
     Generates a QR code that encodes the URI Google Authenticator expects.
     """
-    print('DEBUG: gonna generate that QR code!')
-    qr = test_qr_gen()
+    qr = qrcode.QRCode()
+    qr.add_data(data)
     print_qr(qr)
     write_qr_svg(qr)
     write_qr_png(qr)
