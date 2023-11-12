@@ -45,7 +45,8 @@ def test_qr_gen():
     https://github.com/lincolnloop/python-qrcode
     """        
     qr = qrcode.QRCode()
-    qr.add_data("HELLO WORLD OF QR CODES!")
+    # qr.add_data("HELLO WORLD OF QR CODES!")
+    qr.add_data("HEY BEN! How was Portland?")
     f = io.StringIO()
     qr.print_ascii(out=f)
     f.seek(0)
