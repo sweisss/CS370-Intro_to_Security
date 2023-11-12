@@ -21,6 +21,7 @@ prints the OTP and then sleeps for 30 seconds and then again prints another OTP
 and keeps on going forever.
 """
 import sys
+import io
 import pyotp
 import qrcode
 import qrcode.image.svg
@@ -42,14 +43,13 @@ def display_test_code():
 def test_qr_gen():
     """
     https://github.com/lincolnloop/python-qrcode
-    """
-    factory = qrcode.image.svg.SvgImage
-    img = qrcode.make('Some data here', image_factory=factory)
-    # img = qrcode.make('Some data here', image_factory=PyPNGImage)
-    print(img)
-    img_str = img.to_string(encoding='unicode')
-    with open('qr_test.svg', 'w') as file:
-        file.write(img_str)
+    """        
+    qr = qrcode.QRCode()
+    qr.add_data("HELLO WORLD OF QR CODES!")
+    f = io.StringIO()
+    qr.print_ascii(out=f)
+    f.seek(0)
+    print(f.read())
 
 
 def print_usage():
