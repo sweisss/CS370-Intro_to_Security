@@ -35,8 +35,8 @@ from qrcode.image.pure import PyPNGImage
 SECRETS_FILE = '.secrets'
 QR_PNG_FILENAME = 'qr_code.png'
 QR_SVG_FILENAME = 'qr_code.svg'
-USERNAME = 'UserName'
-APP_NAME = 'Secure App Name'
+USERNAME = 'Seth Weiss'
+APP_NAME = 'Project 3 - OTP'
 WRITE_QR_SVG = False
 WRITE_QR_PNG = True
 PRINT_QR_TO_CONSOLE = True
