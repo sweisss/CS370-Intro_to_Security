@@ -46,6 +46,14 @@ def test_qr_gen():
     """        
     qr = qrcode.QRCode()
     qr.add_data("HELLO WORLD OF QR CODES!")
+    
+    return qr
+
+
+def print_qr(qr):
+    """
+    Takes a QR code and prints it to the console.
+    """
     f = io.StringIO()
     qr.print_ascii(out=f)
     f.seek(0)
@@ -69,7 +77,8 @@ def generate_qr():
     Generates a QR code that encodes the URI Google Authenticator expects.
     """
     print('DEBUG: gonna generate that QR code!')
-    test_qr_gen() if DEBUG else 0
+    qr = test_qr_gen()
+    print_qr(qr)
 
 
 def get_otp():
