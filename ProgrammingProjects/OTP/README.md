@@ -36,6 +36,14 @@ Mac: 3.10.10
 ## Organize the directory
 
 ## Set up the environment
+Set up you venv using your preferred methods. Suggestions can be found at the top of 
+this page. 
+
+Once the venv is activated, install the necessary dependencies by running the following
+command:
+```
+pip install -r requirements.txt
+```
 
 # Run the program
 
