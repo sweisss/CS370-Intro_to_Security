@@ -32,8 +32,7 @@ import qrcode.image.svg
 from qrcode.image.pure import PyPNGImage
 
 
-SECRETS_FILE = '../../.secrets'
-DEBUG = False
+SECRETS_FILE = '.secrets'
 
 
 def display_test_code():
@@ -97,8 +96,7 @@ def generate_secret():
 def generate_uri():
     with open(SECRETS_FILE, 'r') as f:
         secret = f.read()
-    print(f'DEBUG: secret: {secret}')
-    uri = pyotp.totp.TOTP(secret).provisioning_uri(name='username', issuer_name='Secure App name')
+    uri = pyotp.totp.TOTP(secret).provisioning_uri(name='UserName', issuer_name='Secure App Name')
     return uri
 
 
@@ -108,7 +106,6 @@ def generate_qr(data='Hellow World!'):
     """
     generate_secret()
     uri = generate_uri()
-    print(f'DEBUG: uri: {uri}')
     data = uri
     qr = qrcode.QRCode()
     qr.add_data(data)
@@ -122,8 +119,6 @@ def get_otp():
     Generates an OTP that matches the one in the Google Authenticator.
     Lasts for 30 seconds.
     """
-    print('DEBUG: gotta get that otp!')
-    display_test_code() if DEBUG else 0
     with open(SECRETS_FILE, 'r') as f:
         secret = f.read()
     totp = pyotp.TOTP(secret)
