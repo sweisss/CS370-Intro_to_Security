@@ -46,7 +46,7 @@ def test_qr_gen():
     """        
     qr = qrcode.QRCode()
     qr.add_data("HELLO WORLD OF QR CODES!")
-    
+
     return qr
 
 
@@ -58,6 +58,23 @@ def print_qr(qr):
     qr.print_ascii(out=f)
     f.seek(0)
     print(f.read())
+
+
+def write_qr_svg(qr):
+    """
+    Takes a QR code and writes/saves it to an SVG file
+    """
+    factory = qrcode.image.svg.SvgPathImage
+    img = qr.make_image(image_factory=factory)
+    img.save('qr_test.svg', kind='SVG')
+
+
+def write_qr_png(qr):
+    """
+    Takes a QR code and writes/saves it to a PNG file
+    """
+    img = qr.make_image()
+    img.save('qr_test.png')
 
 
 def print_usage():
@@ -79,6 +96,8 @@ def generate_qr():
     print('DEBUG: gonna generate that QR code!')
     qr = test_qr_gen()
     print_qr(qr)
+    write_qr_svg(qr)
+    write_qr_png(qr)
 
 
 def get_otp():
