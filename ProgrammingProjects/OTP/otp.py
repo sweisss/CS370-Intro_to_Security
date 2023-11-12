@@ -35,6 +35,8 @@ from qrcode.image.pure import PyPNGImage
 SECRETS_FILE = '.secrets'
 QR_PNG_FILENAME = 'qr_code.png'
 QR_SVG_FILENAME = 'qr_code.svg'
+USERNAME = 'UserName'
+APP_NAME = 'Secure App Name'
 WRITE_QR_SVG = False
 WRITE_QR_PNG = True
 PRINT_QR_TO_CONSOLE = True
@@ -92,7 +94,7 @@ def generate_secret():
 def generate_uri():
     with open(SECRETS_FILE, 'r') as f:
         secret = f.read()
-    uri = pyotp.totp.TOTP(secret).provisioning_uri(name='UserName', issuer_name='Secure App Name')
+    uri = pyotp.totp.TOTP(secret).provisioning_uri(name=USERNAME, issuer_name=APP_NAME)
     return uri
 
 
