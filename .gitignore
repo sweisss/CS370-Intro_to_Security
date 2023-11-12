@@ -165,3 +165,6 @@ rockyou.ISO-8859-1.txt
 dictionary.txt
 sample_input.txt
 sample_output.txt
+
+# secrets
+.secrets

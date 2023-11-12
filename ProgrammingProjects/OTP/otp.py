@@ -32,8 +32,8 @@ import qrcode.image.svg
 from qrcode.image.pure import PyPNGImage
 
 
+SECRETS_FILE = '../../.secrets'
 DEBUG = True
-TEST_DATA = 'Hello World!'
 
 
 def display_test_code():
@@ -84,10 +84,32 @@ def print_usage():
     -h, --help               give this help list""")
 
 
+def generate_secret():
+    """
+    Generates a secret key used to constuct the QR code.
+    Writes the secret key to a secrets file.
+    """
+    secret = pyotp.random_base32()
+    with open(SECRETS_FILE, 'w') as f:
+        f.write(secret)
+
+
+def generate_uri():
+    with open(SECRETS_FILE, 'r') as f:
+        secret = f.read()
+    print(f'DEBUG: secret: {secret}')
+    uri = pyotp.totp.TOTP(secret).provisioning_uri(name='username', issuer_name='Secure App name')
+    return uri
+
+
 def generate_qr(data='Hellow World!'):
     """
     Generates a QR code that encodes the URI Google Authenticator expects.
     """
+    generate_secret()
+    uri = generate_uri()
+    print(f'DEBUG: uri: {uri}')
+    data = uri
     qr = qrcode.QRCode()
     qr.add_data(data)
     print_qr(qr)
