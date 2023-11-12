@@ -21,6 +21,19 @@ prints the OTP and then sleeps for 30 seconds and then again prints another OTP
 and keeps on going forever.
 """
 import sys
+import pyotp
+
+
+DEBUG = True
+
+
+def display_test_code():
+    """
+    Displays the test code from the pyotp tutorial
+    https://pyauth.github.io/pyotp/#working-example
+    """
+    totp = pyotp.TOTP("JBSWY3DPEHPK3PXP")
+    print("Current OTP:", totp.now())
 
 
 def print_usage():
@@ -36,11 +49,19 @@ def print_usage():
 
 
 def generate_qr():
+    """
+    Generates a QR code that encodes the URI Google Authenticator expects.
+    """
     print('gonna generate that QR code!')
 
 
 def get_otp():
+    """
+    Generates an OTP that matches the one in the Google Authenticator.
+    Lasts for 30 seconds.
+    """
     print('gotta get that otp!')
+    display_test_code() if DEBUG else 0
 
 
 def main():
