@@ -33,15 +33,6 @@ from qrcode.image.pure import PyPNGImage
 
 
 SECRETS_FILE = '.secrets'
-
-
-def display_test_code():
-    """
-    Displays the test code from the pyotp tutorial
-    https://pyauth.github.io/pyotp/#working-example
-    """
-    totp = pyotp.TOTP("JBSWY3DPEHPK3PXP")
-    print("Current OTP:", totp.now())
     
     
 def print_qr(qr):
