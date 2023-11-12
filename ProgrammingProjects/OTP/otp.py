@@ -33,7 +33,7 @@ from qrcode.image.pure import PyPNGImage
 
 
 SECRETS_FILE = '../../.secrets'
-DEBUG = True
+DEBUG = False
 
 
 def display_test_code():
@@ -124,7 +124,11 @@ def get_otp():
     """
     print('DEBUG: gotta get that otp!')
     display_test_code() if DEBUG else 0
-
+    with open(SECRETS_FILE, 'r') as f:
+        secret = f.read()
+    totp = pyotp.TOTP(secret)
+    print('Current OTP:', totp.now())
+    
 
 def main():
     usage_options = {
