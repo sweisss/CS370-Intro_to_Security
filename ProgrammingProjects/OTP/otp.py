@@ -45,8 +45,7 @@ def test_qr_gen():
     https://github.com/lincolnloop/python-qrcode
     """        
     qr = qrcode.QRCode()
-    # qr.add_data("HELLO WORLD OF QR CODES!")
-    qr.add_data("HEY BEN! How was Portland?")
+    qr.add_data("HELLO WORLD OF QR CODES!")
     f = io.StringIO()
     qr.print_ascii(out=f)
     f.seek(0)
@@ -69,8 +68,8 @@ def generate_qr():
     """
     Generates a QR code that encodes the URI Google Authenticator expects.
     """
-    print('gonna generate that QR code!')
-    test_qr_gen()
+    print('DEBUG: gonna generate that QR code!')
+    test_qr_gen() if DEBUG else 0
 
 
 def get_otp():
@@ -78,7 +77,7 @@ def get_otp():
     Generates an OTP that matches the one in the Google Authenticator.
     Lasts for 30 seconds.
     """
-    print('gotta get that otp!')
+    print('DEBUG: gotta get that otp!')
     display_test_code() if DEBUG else 0
 
 
