@@ -22,6 +22,9 @@ and keeps on going forever.
 """
 import sys
 import pyotp
+import qrcode
+import qrcode.image.svg
+from qrcode.image.pure import PyPNGImage
 
 
 DEBUG = True
@@ -34,6 +37,19 @@ def display_test_code():
     """
     totp = pyotp.TOTP("JBSWY3DPEHPK3PXP")
     print("Current OTP:", totp.now())
+    
+    
+def test_qr_gen():
+    """
+    https://github.com/lincolnloop/python-qrcode
+    """
+    factory = qrcode.image.svg.SvgImage
+    img = qrcode.make('Some data here', image_factory=factory)
+    # img = qrcode.make('Some data here', image_factory=PyPNGImage)
+    print(img)
+    img_str = img.to_string(encoding='unicode')
+    with open('qr_test.svg', 'w') as file:
+        file.write(img_str)
 
 
 def print_usage():
@@ -53,6 +69,7 @@ def generate_qr():
     Generates a QR code that encodes the URI Google Authenticator expects.
     """
     print('gonna generate that QR code!')
+    test_qr_gen()
 
 
 def get_otp():
