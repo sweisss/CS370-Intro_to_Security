@@ -42,7 +42,7 @@ def display_test_code():
     
 def test_qr_gen():
     """
-    https://github.com/lincolnloop/python-qrcode
+    https://github.com/lincolnloop/python-qrcode#examples
     """        
     qr = qrcode.QRCode()
     qr.add_data("HELLO WORLD OF QR CODES!")
