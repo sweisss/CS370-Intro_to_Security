@@ -33,6 +33,8 @@ from qrcode.image.pure import PyPNGImage
 
 
 SECRETS_FILE = '.secrets'
+QR_PNG_FILENAME = 'qr_code.png'
+QR_SVG_FILENAME = 'qr_code.svg'
     
     
 def print_qr(qr):
@@ -51,7 +53,7 @@ def write_qr_svg(qr):
     """
     factory = qrcode.image.svg.SvgPathImage
     img = qr.make_image(image_factory=factory)
-    img.save('qr_test.svg', kind='SVG')
+    img.save(QR_SVG_FILENAME, kind='SVG')
 
 
 def write_qr_png(qr):
@@ -59,7 +61,7 @@ def write_qr_png(qr):
     Takes a QR code and writes/saves it to a PNG file
     """
     img = qr.make_image()
-    img.save('qr_test.png')
+    img.save(QR_PNG_FILENAME)
 
 
 def print_usage():
@@ -101,7 +103,7 @@ def generate_qr(data='Hellow World!'):
     qr = qrcode.QRCode()
     qr.add_data(data)
     print_qr(qr)
-    write_qr_svg(qr)
+    # write_qr_svg(qr)
     write_qr_png(qr)
 
 

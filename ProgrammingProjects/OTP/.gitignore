@@ -160,11 +160,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# Large project files:
-rockyou.ISO-8859-1.txt
-dictionary.txt
-sample_input.txt
-sample_output.txt
-
-# secrets
+# Project specific files
+qr_code.*
 .secrets
