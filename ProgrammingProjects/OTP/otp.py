@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Seth Weiss
 weissse@oregonstate.edu
