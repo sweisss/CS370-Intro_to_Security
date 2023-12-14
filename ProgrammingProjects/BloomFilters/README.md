@@ -43,7 +43,7 @@ Ensure that the project directory contains the follwing files
 > the program to run properly. 
 
 ## Set up the environment
-Set up you venv using your preferred methods. Suggestions can be found at the top of 
+Set up your venv using your preferred methods. Suggestions can be found at the top of 
 this page. 
 
 Once the venv is activated, install the necessary dependencies by running the following
